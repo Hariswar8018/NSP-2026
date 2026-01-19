@@ -1,0 +1,398 @@
+import 'package:flutter/material.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:translator/translator.dart';
+import '../model/finalvoterlist.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
+class Show extends StatefulWidget {
+  final List<FinalVoterList> list;
+  final String id;
+
+  const Show({super.key, required this.list, required this.id});
+
+  @override
+  State<Show> createState() => _ShowState();
+}
+
+class _ShowState extends State<Show> {
+  VoterStats calculateVoterStats(List<FinalVoterList> voters) {
+    int male = 0;
+    int female = 0;
+    int noEpic = 0;
+
+    final Set<int> serials = {};
+
+    for (final v in voters) {
+      if (v.genderEn.toLowerCase() == 'm') male++;
+      if (v.genderEn.toLowerCase() == 'f') female++;
+      if (v.epicNo.trim().isEmpty || v.voterId.trim().isEmpty) {
+        noEpic++;
+      }
+
+      serials.add(v.serialNo);
+    }
+
+    // find max serial
+    final int maxSerial = serials.isEmpty
+        ? 0
+        : serials.reduce((a, b) => a > b ? a : b);
+
+    // find missing serials
+    final List<int> missingSerials = [];
+    for (int i = 1; i <= maxSerial; i++) {
+      if (!serials.contains(i)) {
+        missingSerials.add(i);
+      }
+    }
+
+    return VoterStats(
+      total: voters.length,
+      male: male,
+      female: female,
+      noEpic: noEpic,
+      missingSerials: missingSerials,
+    );
+  }
+
+  void f() {
+    final stats = calculateVoterStats(widget.list);
+
+    print("Total voters: ${stats.total}");
+    print("Male: ${stats.male}");
+    print("Female: ${stats.female}");
+    print("No EPIC/VoterId: ${stats.noEpic}");
+    print("Missing serials: ${stats.missingSerials}");
+    setState(() {
+      total = stats.total;
+      male = stats.male;
+      female = stats.female;
+      epic = stats.noEpic;
+      my = stats.missingSerials;
+    });
+  }
+  List<int> my = [];
+  int total = 0, male = 0, female = 0, epic = 0;
+
+
+  @override
+  void initState() {
+    super.initState();
+    f();
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    double w = MediaQuery.of(context).size.width;
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(height: 8,),
+            CarouselSlider(
+              options: CarouselOptions(
+                height: 190,
+                aspectRatio: 16 / 9,
+                viewportFraction: 1,
+                initialPage: 0,
+                enableInfiniteScroll: true,
+                reverse: false,
+                autoPlay: true,
+                autoPlayInterval: Duration(seconds: 3),
+                autoPlayAnimationDuration: Duration(milliseconds: 800),
+                autoPlayCurve: Curves.fastOutSlowIn,
+                enlargeCenterPage: true,
+                enlargeFactor: 0.3,
+                scrollDirection: Axis.horizontal,
+              ),
+              items:
+                  [
+                    "assets/1.webp",
+                    "assets/2.png",
+                    "assets/3.jpg",
+                    "assets/4.png",
+                  ].map((i) {
+                    return Builder(
+                      builder: (BuildContext context) {
+                        return Padding(
+                          padding: const EdgeInsets.all(1.0),
+                          child: Container(
+                            width: w - 25,
+                            height: 150,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black, width: 2),
+                              borderRadius: BorderRadius.circular(7),
+                              image: DecorationImage(
+                                image: AssetImage(i),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }).toList(),
+            ),
+            SizedBox(height: 8,),
+            Container(
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(color: Colors.white),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Container(
+                        width: w / 2 ,
+                        height: w / 3 + 25,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.red, width: 4),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(6.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Image.asset(
+                                "assets/voting_hand_with_tricolour-scaled.jpg",
+                                width: (w / 3 - 10) - 20,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: Text("Total Voters",style: TextStyle(fontSize: 10,fontWeight: FontWeight.w600),),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: Text("${total}",style: TextStyle(fontSize: 26,fontWeight: FontWeight.w800),),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Column(
+                        children: [
+                          c(w,true),
+                          SizedBox(height: 4),
+                          c(w,false),
+                        ],
+                      ),
+        
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 10,),
+            Center(
+              child: Container(
+                width: w-15,
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(
+                        color: Colors.grey.shade200
+                    ),
+                    borderRadius: BorderRadius.circular(10)
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 10.0,bottom: 15),
+                  child: Center(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("    Most Used",style: TextStyle(fontWeight: FontWeight.w700),textAlign: TextAlign.start,),
+                        SizedBox(height: 9,),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            q(context,"assets/istockphoto-1960011023-612x612.jpg","My Data"),
+                            q(context,"assets/search.gif","Search"),
+                            InkWell(
+                                onTap: () async {
+        
+                                },
+                                child: q(context,"assets/14256604.png","Admin Panel")),
+                            q(context,"assets/upload.gif","Upload"),
+        
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 10,),
+            Center(
+              child: Container(
+                width: w-15,
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(
+                        color: Colors.grey.shade200
+                    ),
+                    borderRadius: BorderRadius.circular(10)
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 10.0,bottom: 15),
+                  child: Center(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("    Voters Related",style: TextStyle(fontWeight: FontWeight.w700),textAlign: TextAlign.start,),
+                        SizedBox(height: 9,),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            q(context,"assets/istockphoto-1960011023-612x612.jpg","Voters"),
+                            q(context,"assets/search.gif","Constituency"),
+                            InkWell(
+                                onTap: () async {
+
+                                },
+                                child: q(context,"assets/14256604.png","Seach")),
+                            q(context,"assets/upload.gif","Website"),
+
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 10,),
+            Center(
+              child: Container(
+                width: w-15,
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(
+                      color: Colors.grey.shade200
+                    ),
+                    borderRadius: BorderRadius.circular(10)
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 10.0,bottom: 15),
+                  child: Center(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("    Constituency Related",style: TextStyle(fontWeight: FontWeight.w700),textAlign: TextAlign.start,),
+                        SizedBox(height: 9,),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            q(context,"assets/istockphoto-1960011023-612x612.jpg","My Data"),
+                            q(context,"assets/search.gif","Search"),
+                            InkWell(
+                                onTap: () async {
+        
+                                },
+                                child: q(context,"assets/14256604.png","Admin Panel")),
+                            q(context,"assets/upload.gif","Upload"),
+        
+                          ],
+                        ),
+                        SizedBox(height: 9,),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            q(context,"assets/istockphoto-1960011023-612x612.jpg","My Data"),
+                            q(context,"assets/search.gif","Search"),
+                            InkWell(
+                                onTap: () async {
+
+                                },
+                                child: q(context,"assets/14256604.png","Admin Panel")),
+                            q(context,"assets/upload.gif","Upload"),
+
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 130,),
+          ],
+        ),
+      ),
+    );
+  }
+  Widget q(BuildContext context, String asset, String str) {
+    double d = MediaQuery.of(context).size.width / 4 - 35;
+    return Column(
+      children: [
+        Container(
+            width: d,
+            height: d,
+            decoration: BoxDecoration(
+              color: Colors.white,
+
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Image.asset(asset, height: d-50,))),
+        SizedBox(height: 7),
+        Text(str, style: TextStyle(fontWeight: FontWeight.w400,fontSize: 9)),
+      ],
+    );
+  }
+  Widget c(double w, bool f){
+    return Container(
+      width: w / 2 - 30,
+      height: (w / 3 + 20) / 2,
+      decoration: BoxDecoration(
+        border: Border.all(color: f?Colors.pinkAccent:Colors.blue, width: 4),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 3.0),
+        child: Row(
+          children: [
+            Image.asset(f?"assets/female.png":"assets/male.jpg",width: ((w / 3 + 20) / 2)*0.9,),
+            SizedBox(width: 9,),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(f?"Total Female":"Total Male",style: TextStyle(fontSize: 11),),
+                Text("${giveback(f?female.toString():male.toString())}",style: TextStyle(fontWeight: FontWeight.w800,fontSize: 15),)
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+  String giveback(String str){
+    if(str.length<=3){
+      return str;
+    }
+    return str.substring(0, 1) + "," + str.substring(1);
+  }
+}
+
+class VoterStats {
+  final int total;
+  final int male;
+  final int female;
+  final int noEpic;
+  final List<int> missingSerials;
+
+  VoterStats({
+    required this.total,
+    required this.male,
+    required this.female,
+    required this.noEpic,
+    required this.missingSerials,
+  });
+}
