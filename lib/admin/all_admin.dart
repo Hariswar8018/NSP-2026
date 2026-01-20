@@ -4,11 +4,33 @@ import 'package:nsp2026/admin/add_consitutency.dart';
 import 'package:nsp2026/admin/see_all_Admin.dart';
 import 'package:nsp2026/login/login.dart';
 
+import '../home/init.dart';
 import '../model/constituency.dart';
 
-class AllAdmin extends StatelessWidget {
+class AllAdmin extends StatefulWidget {
   const AllAdmin({super.key});
 
+  @override
+  State<AllAdmin> createState() => _AllAdminState();
+}
+
+class _AllAdminState extends State<AllAdmin> {
+
+  void v(){
+    if(user2.isadmin){
+
+    }else{
+      const snackBar = SnackBar(
+        content: Text('You don\'t have Upload Access. Please Contact Admin'),
+      );
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      return ;
+    }
+  }
+  void initState(){
+    v();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,7 +68,7 @@ class AllAdmin extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.red,
         onPressed: (){
-          Navigator.push(context,MaterialPageRoute(builder: (_)=>AddECIConstituency()));
+          Navigator.push(context,MaterialPageRoute(builder: (_)=>AddECIConstituency(cons: null,)));
       },child: Icon(Icons.upload_file_rounded,color: Colors.white,),),
     );
   }
@@ -76,8 +98,8 @@ class _ConsclassState extends State<Consclass> {
             Navigator.push(context, MaterialPageRoute(builder: (_)=>Login(str: widget.con.id,)));
           }else if(widget.i==1){
             Navigator.push(context, MaterialPageRoute(builder: (_)=>SeeAllAdmin(cons: widget.con)));
-          }else{
-            
+          }else if(widget.i==3){
+            Navigator.push(context, MaterialPageRoute(builder: (_)=>AddECIConstituency(cons: widget.con)));
           }
         }
       },

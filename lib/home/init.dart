@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:nsp2026/home/navigation.dart';
 
 import '../model/finalvoterlist.dart';
+import '../model/user.dart';
 
 class VoterRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -14,16 +15,34 @@ class VoterRepository {
     final snap = await _firestore.collection(collectionId).get();
 
     return snap.docs
-        .map((doc) => FinalVoterList.fromMap(
-      doc.data() as Map<String, dynamic>,
+        .map((doc) => FinalVoterList.fromMap(doc.data() as Map<String, dynamic>,
     ))
         .toList();
   }
-}
+  Future<LoginModel?> fetchUser(
+      String collectionId,
+      String username,
+      ) async {
+    final snap = await FirebaseFirestore.instance
+        .collection(collectionId)
+        .doc("logins")
+        .collection("logins")
+        .where('username', isEqualTo: username)
+        .limit(1)
+        .get();
 
+    if (snap.docs.isEmpty) return null;
+
+    return LoginModel.fromMap(
+      snap.docs.first.data(),
+    );
+  }
+
+}
+late LoginModel user2 ;
 class InitCla extends StatefulWidget {
-  final String id;
-  const InitCla({super.key,required this.id});
+  final String id; final String username;
+  const InitCla({super.key,required this.id,required this.username});
 
   @override
   State<InitCla> createState() => _InitClaState();
@@ -40,9 +59,11 @@ class _InitClaState extends State<InitCla> {
     super.initState();
     loadVoters();
   }
-
+  static LoginModel? user1 ;
   Future<void> loadVoters() async {
     allVoters = await repo.fetchVoters(widget.id);
+   user1 = await repo.fetchUser(widget.id,widget.username);
+   user2 = user1!;
     filteredVoters = allVoters;
     setState(() => on = true);
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>Navigation(

@@ -21,33 +21,65 @@ class _UploadState extends State<Upload> {
       appBar: AppBar(
         title: Text("Convert OCR Text"),
       ),
-      body: Column(
-        children: [
-          on?LinearProgressIndicator(
-            color: Colors.red,
-          ):SizedBox(),
-          ListTile(
-            leading: CircleAvatar(
-              backgroundColor: Colors.yellow,
-              child: Text("2",style: TextStyle(fontWeight: FontWeight.w800,fontSize: 20),),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            on?LinearProgressIndicator(
+              color: Colors.red,
+            ):SizedBox(),
+            ListTile(
+              leading: CircleAvatar(
+                backgroundColor: Colors.yellow,
+                child: Text("2",style: TextStyle(fontWeight: FontWeight.w800,fontSize: 20),),
+              ),
+              title: Text("Paste the OCR Text",style: TextStyle(fontWeight: FontWeight.w800),),
+              subtitle: Text("Paste the OCR Text you got from Website. It will be read automatically"),
             ),
-            title: Text("Paste the OCR Text",style: TextStyle(fontWeight: FontWeight.w800),),
-            subtitle: Text("Paste the OCR Text you got from Website. It will be read automatically"),
-          ),
-          Container(
-            height: 400,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            child: TextFormField(
-              controller: name,
-              minLines: 12,maxLines: 1000,
-              decoration: const InputDecoration(
-                labelText: 'Paste the Text from OCR',
-                isDense: true,
-                border: OutlineInputBorder(),
+            Container(
+              height: 400,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              child: TextFormField(
+                controller: name,
+                minLines: 12,maxLines: 1000,
+                decoration: const InputDecoration(
+                  labelText: 'Paste the Text from OCR',
+                  isDense: true,
+                  border: OutlineInputBorder(),
+                ),
               ),
             ),
-          ),
-        ],
+            if (parseErrors.isNotEmpty) Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                width: w,height: 400,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "⚠ Parsing Errors (${parseErrors.length})",
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      ...parseErrors.map(
+                            (e) => Padding(
+                          padding: const EdgeInsets.only(bottom: 6),
+                          child: Text(
+                            e,maxLines: 3,
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
       persistentFooterButtons: [
         on?Center(child: CircularProgressIndicator(
@@ -228,28 +260,44 @@ class _UploadState extends State<Upload> {
     return translation.text;
   }
   Future<void> onParseButtonPressed(String rawText) async {
-    final lines = rawText
-        .trim()
-        .split(RegExp(r'\n+'))
-        .where((e) => e.trim().isNotEmpty)
-        .toList();
+    final rows = normalizeVoterLines(rawText);
 
     final List<FinalVoterList> result = [];
+    parseErrors.clear();
 
-    for (final line in lines) {
-      final voter = await parseFinalVoterRow(
-        line,
-        widget.data, // area map
-        widget.id,   // constituency id
-      );
-      result.add(voter);
+    for (int index = 0; index < rows.length; index++) {
+      final row = rows[index];
+
+      try {
+        final voter = await parseFinalVoterRow(
+          row,
+          widget.data,
+          widget.id,
+        );
+        result.add(voter);
+      } catch (e, st) {
+        // 🔴 Capture error with row info
+        parseErrors.add(
+          'Row ${index + 1} FAILED\n'
+              'Text: "$row"\n'
+              'Error: ${e.toString()}',
+        );
+
+        debugPrint('❌ Parse error at row ${index + 1}');
+        debugPrint(row);
+        debugPrint(e.toString());
+      }
     }
 
     voterList = result;
 
-    debugPrint("Total voters: ${voterList.length}");
+    debugPrint("✅ Parsed voters: ${voterList.length}");
+    debugPrint("❌ Errors: ${parseErrors.length}");
+
     setState(() {});
   }
+
+  List<String> parseErrors = [];
 
 
 
@@ -257,6 +305,29 @@ class _UploadState extends State<Upload> {
   List<FinalVoterList> voterList = [];
   TextEditingController name = .new();
 
+  List<String> normalizeVoterLines(String rawText) {
+    final rawLines = rawText
+        .split(RegExp(r'\n+'))
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toList();
+
+    final List<String> rows = [];
+
+    for (final line in rawLines) {
+      // starts with serial number → new voter
+      if (RegExp(r'^\d+\s').hasMatch(line)) {
+        rows.add(line);
+      } else {
+        // continuation of previous voter
+        if (rows.isNotEmpty) {
+          rows[rows.length - 1] += ' $line';
+        }
+      }
+    }
+
+    return rows;
+  }
 
 
 }

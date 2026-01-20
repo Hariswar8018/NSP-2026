@@ -56,19 +56,16 @@ class _MyHomePageState extends State<MyHomePage> {
 
     String s = await prefs.getString('username')??"NA";
     String s1 = await prefs.getString('id')??"NA";
-
     if(s!="NA"){
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => InitCla(id: s1,),
+          builder: (_) => InitCla(id: s1,username: s,),
         ),
       );
     }else{
       Future.delayed(const Duration(seconds: 3), () async {
         if (!mounted) return;
-
-
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(

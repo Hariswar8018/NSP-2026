@@ -6,7 +6,8 @@ import '../admin/all_admin.dart';
 import '../model/constituency.dart';
 
 class AllConstituency extends StatefulWidget {
-  const AllConstituency({super.key});
+  final bool isedit ;
+  const AllConstituency({super.key,this.isedit = false});
 
   @override
   State<AllConstituency> createState() => _AllConstituencyState();
@@ -18,7 +19,10 @@ class _AllConstituencyState extends State<AllConstituency> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Text("Select Constituency",style: TextStyle(color: Colors.white),),
+        iconTheme: IconThemeData(
+          color: Colors.white
+        ),
+        title: Text(widget.isedit?"Edit Constituency":"Select Constituency",style: TextStyle(color: Colors.white),),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
@@ -42,7 +46,7 @@ class _AllConstituencyState extends State<AllConstituency> {
             itemCount: list.length,
             itemBuilder: (_, i) {
               final c = list[i];
-              return Consclass(con: c,i: 0,);
+              return Consclass(con: c,i: widget.isedit?3: 0,);
             },
           );
         },

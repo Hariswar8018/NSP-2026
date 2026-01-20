@@ -1,6 +1,7 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:nsp2026/home/init.dart';
 import 'package:nsp2026/home/upload/scan.dart';
 
 class Up extends StatefulWidget {
@@ -31,7 +32,14 @@ class _UpState extends State<Up> {
           SizedBox(height: 25,),
           InkWell(
             onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (_)=>Scan(id: widget.id)));
+              if(user2.isuploaddata){
+                Navigator.push(context, MaterialPageRoute(builder: (_)=>Scan(id: widget.id)));
+              }else{
+                const snackBar = SnackBar(
+                  content: Text('You don\'t have Upload Access. Please Contact Admin'),
+                );
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              }
             },
             child: Container(
               width: MediaQuery.of(context).size.width-20,

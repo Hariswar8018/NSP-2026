@@ -5,7 +5,8 @@ import '../model/constituency.dart';
 import '../model/view.dart';
 
 class AddECIConstituency extends StatefulWidget {
-  const AddECIConstituency({super.key});
+  Constituency? cons ;
+  AddECIConstituency({super.key,required this.cons});
 
   @override
   State<AddECIConstituency> createState() => _AddECIConstituencyState();
@@ -22,7 +23,37 @@ class _AddECIConstituencyState extends State<AddECIConstituency> {
   final TextEditingController matdansthal = TextEditingController();
   final TextEditingController wardsankya = TextEditingController();
   final TextEditingController sammilitjaswagram = TextEditingController();
+  final TextEditingController state = TextEditingController();
+  final TextEditingController district = TextEditingController();
+  final TextEditingController assemblyConstituency = TextEditingController();
+  final TextEditingController boothNo = TextEditingController();
 
+  void initState(){
+    if(widget.cons!=null){
+      state.text = widget.cons!.state;
+      district.text = widget.cons!.district;
+      assemblyConstituency.text = widget.cons!.assemblyConstituency;
+      boothNo.text = widget.cons!.boothNo;
+
+      id = widget.cons!.id;
+
+      jila.text = widget.cons!.jila;
+      vikaskhand.text = widget.cons!.vikaskhand;
+      grampanchayat.text=widget.cons!.grampanchayat;
+      matdankendra.text = widget.cons!.matdankendra;
+
+      sambawad.text = widget.cons!.sambawad;
+      matdansthal.text = widget.cons!.matdansthal;
+      wardsankya.text = widget.cons!.wardsankya;
+      sammilitjaswagram.text = widget.cons!.sammilitjaswagram;
+    }else{
+      id = "NSP" + DateTime.now().microsecondsSinceEpoch.toString();
+    }
+    setState(() {
+
+    });
+  }
+   late String id ;
   @override
   void dispose() {
     jila.dispose();
@@ -73,7 +104,7 @@ class _AddECIConstituencyState extends State<AddECIConstituency> {
   Widget build(BuildContext context) {
     final w = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(title: Text("Add Default Constituency")),
+      appBar: AppBar(title: Text(widget.cons==null?"Add Default Constituency":"Edit Constituency")),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -86,7 +117,7 @@ class _AddECIConstituencyState extends State<AddECIConstituency> {
               ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 8.0),
-                child: Text("Add Constituency",style: TextStyle(fontWeight: FontWeight.w900,fontSize: 22),),
+                child: Text("Constituency Domain",style: TextStyle(fontWeight: FontWeight.w900,fontSize: 22),),
               ),
               _field(w, "State", state),
               _field(w, "District", district),
@@ -126,13 +157,20 @@ class _AddECIConstituencyState extends State<AddECIConstituency> {
           onTap: () async {
             final data = getFormData();
             try {
-              final String id =
-                  "NSP" + DateTime.now().microsecondsSinceEpoch.toString();
               final data = toConstituency(id);
-              await FirebaseFirestore.instance
-                  .collection("constituency")
-                  .doc(data.id)
-                  .set(data.toJson());
+              if(widget.cons==null){
+                await FirebaseFirestore.instance
+                    .collection("constituency")
+                    .doc(data.id)
+                    .set(data.toJson());
+              }else{
+                await FirebaseFirestore.instance
+                    .collection("constituency")
+                    .doc(data.id)
+                    .update(data.toJson());
+                Navigator.pop(context);
+                return ;
+              }
               try {
                 await given(id, village: "jila", villagename: jila.text.trim());
                 await given(
@@ -198,10 +236,10 @@ class _AddECIConstituencyState extends State<AddECIConstituency> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.add),
+                widget.cons==null?Icon(Icons.add):Icon(Icons.update),
                 SizedBox(width: 8),
                 Text(
-                  "Yes, Add this Constituency",
+                  widget.cons==null?"Yes, Add this Constituency":"Yes, Edit Now",
                   style: TextStyle(fontWeight: FontWeight.w700),
                 ),
               ],
@@ -245,9 +283,6 @@ class _AddECIConstituencyState extends State<AddECIConstituency> {
     );
   }
 
-  final TextEditingController state = TextEditingController();
-  final TextEditingController district = TextEditingController();
-  final TextEditingController assemblyConstituency = TextEditingController();
-  final TextEditingController boothNo = TextEditingController();
+
 
 }

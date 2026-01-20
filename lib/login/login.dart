@@ -30,7 +30,7 @@ class _LoginState extends State<Login> {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString('username', username);
       await prefs.setString('id', widget.str);
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>InitCla(id: widget.str,)));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>InitCla(id: widget.str,username: username,)));
     }
     debugPrint('Username: $username');
     debugPrint('Password: $password');

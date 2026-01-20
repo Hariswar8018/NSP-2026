@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:nsp2026/extra/all_voters.dart';
+import 'package:nsp2026/function/global.dart';
+import 'package:nsp2026/home/all_data.dart';
+import 'package:nsp2026/home/init.dart';
+import 'package:nsp2026/login/all_constituency.dart';
 import 'package:translator/translator.dart';
+import '../admin/all_admin.dart';
+import '../admin/view/add_view.dart';
 import '../model/finalvoterlist.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class Show extends StatefulWidget {
   final List<FinalVoterList> list;
   final String id;
-
-  const Show({super.key, required this.list, required this.id});
+  final void Function(int index) onFallback;
+  const Show({super.key, required this.list, required this.id,   required this.onFallback,});
 
   @override
   State<Show> createState() => _ShowState();
@@ -201,26 +208,68 @@ class _ShowState extends State<Show> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("    Most Used",style: TextStyle(fontWeight: FontWeight.w700),textAlign: TextAlign.start,),
+                        Text("    You may use ",style: TextStyle(fontWeight: FontWeight.w700),textAlign: TextAlign.start,),
                         SizedBox(height: 9,),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            q(context,"assets/istockphoto-1960011023-612x612.jpg","My Data"),
-                            q(context,"assets/search.gif","Search"),
+                            InkWell(
+                                onTap: (){
+                                  widget.onFallback(1);
+                                },
+                                child: q(context,"assets/search.gif","Search")),
                             InkWell(
                                 onTap: () async {
-        
+                                  if(Global.check(context)){
+                                    return ;
+                                  }
+                                    Navigator.push(context,MaterialPageRoute(builder: (_)=>AllAdmin()));
                                 },
                                 child: q(context,"assets/14256604.png","Admin Panel")),
-                            q(context,"assets/upload.gif","Upload"),
-        
+                            InkWell(
+                                onTap: (){
+                                  print(user2.isadmin);
+
+                                    widget.onFallback(2);
+
+                                },
+                                child: q(context,"assets/upload.gif","Upload")),
+                            InkWell(
+                                onTap: (){
+                                  Global.launch("https://ayus.dev.xyz");
+                                },
+                                child: q(context,"assets/website.gif","Website")),
                           ],
                         ),
                       ],
                     ),
                   ),
+                ),
+              ),
+            ),
+            my.isEmpty?SizedBox():SizedBox(height: 10,),
+            my.isEmpty?SizedBox():Container(
+              width: w-20,
+              height: 40,
+              decoration: BoxDecoration(
+                color: Colors.red,
+                borderRadius: BorderRadius.circular(10)
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text("Missing Voters are : ",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w800),),
+                    Flexible(child: ListView.builder(
+                      itemCount: my.length,
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Center(child: Text(my[index].toString()+ ",  ",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w800)));
+                      },
+                    ))
+                  ],
                 ),
               ),
             ),
@@ -247,14 +296,33 @@ class _ShowState extends State<Show> {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            q(context,"assets/istockphoto-1960011023-612x612.jpg","Voters"),
-                            q(context,"assets/search.gif","Constituency"),
+                            InkWell(
+                                onTap: (){
+                                  Navigator.push(context, MaterialPageRoute(builder: (_)=>AllVoters(list: widget.list,id: widget.id,)));
+                                },
+                                child: q(context,"assets/voters.gif","All Voters")),
+                            InkWell(
+                                onTap: (){
+                                  if(Global.check(context)){
+                                    return ;
+                                  }
+                                  Navigator.push(context, MaterialPageRoute(builder: (_)=>AllConstituency(isedit: true,)));
+                                },
+                                child: q(context,"assets/constituency.webp","Constituency")),
                             InkWell(
                                 onTap: () async {
+                                  if(Global.check(context)){
+                                    return ;
+                                  }
+                                  Navigator.push(context, MaterialPageRoute(builder: (_)=>EditVoters(id: widget.id, list: widget.list)));
 
                                 },
-                                child: q(context,"assets/14256604.png","Seach")),
-                            q(context,"assets/upload.gif","Website"),
+                                child: q(context,"assets/edit.webp","Edit Voters")),
+                            InkWell(
+                                onTap: (){
+                                  Global.launch("https://wa.me/917978097489");
+                                },
+                                child: q(context,"assets/support.png","Support")),
 
                           ],
                         ),
@@ -287,15 +355,10 @@ class _ShowState extends State<Show> {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            q(context,"assets/istockphoto-1960011023-612x612.jpg","My Data"),
-                            q(context,"assets/search.gif","Search"),
-                            InkWell(
-                                onTap: () async {
-        
-                                },
-                                child: q(context,"assets/14256604.png","Admin Panel")),
-                            q(context,"assets/upload.gif","Upload"),
-        
+                            q1(context,"assets/jila.jpg","jila"),
+                            q1(context,"assets/vikash.jpg","vikaskhand"),
+                             q1(context,"assets/grampanchayat.jpg","grampanchayat"),
+                            q1(context,"assets/matdankendr.jpg","matdankendra"),
                           ],
                         ),
                         SizedBox(height: 9,),
@@ -303,15 +366,10 @@ class _ShowState extends State<Show> {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            q(context,"assets/istockphoto-1960011023-612x612.jpg","My Data"),
-                            q(context,"assets/search.gif","Search"),
-                            InkWell(
-                                onTap: () async {
-
-                                },
-                                child: q(context,"assets/14256604.png","Admin Panel")),
-                            q(context,"assets/upload.gif","Upload"),
-
+                            q1(context,"assets/matdankendra.jpg","sambawad"),
+                            q1(context,"assets/sambawad.jpg","matdansthal"),
+                            q1(context,"assets/wardsankya.jpg","wardsankya"),
+                            q1(context,"assets/sammilitjaswagram.webp","sammilitjaswagram"),
                           ],
                         ),
                       ],
@@ -345,6 +403,40 @@ class _ShowState extends State<Show> {
         Text(str, style: TextStyle(fontWeight: FontWeight.w400,fontSize: 9)),
       ],
     );
+  }
+  Widget q1(BuildContext context, String asset, String str) {
+    double d = MediaQuery.of(context).size.width / 4 - 35;
+    return InkWell(
+      onTap: (){
+        Navigator.push(context, MaterialPageRoute(builder: (_)=>ViewTextListPage(
+          consid: widget.id, village: str,
+        )));
+      },
+      child: Column(
+        children: [
+          Container(
+              width: d,
+              height: d,
+              decoration: BoxDecoration(
+                color: Colors.white,
+
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Image.asset(asset, height: d-50,))),
+          SizedBox(height: 7),
+          Text(send(str), style: TextStyle(fontWeight: FontWeight.w400,fontSize: 9)),
+        ],
+      ),
+    );
+  }
+  String send(String str){
+    int i = 13;
+    if(str.length>i){
+      return str.substring(0,1).toUpperCase()+str.substring(1,i)+"...";
+    }
+    return str.substring(0,1).toUpperCase()+str.substring(1,);
   }
   Widget c(double w, bool f){
     return Container(
@@ -396,3 +488,22 @@ class VoterStats {
     required this.missingSerials,
   });
 }
+
+class EditVoters extends StatelessWidget {
+  final String id;final List<FinalVoterList> list;
+  const EditVoters({super.key, required this.id,required this.list, });
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        iconTheme: IconThemeData(
+          color: Colors.white
+        ),
+        backgroundColor: Colors.black,
+        title: Text("Edit Voters",style: TextStyle(color: Colors.white),),
+      ),
+      body: Home(id: id, list: list,yes: true,)
+    );
+  }
+}
+

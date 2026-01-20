@@ -1,13 +1,30 @@
 
 import 'package:flutter/material.dart';
 import 'package:nsp2026/admin/all_admin.dart';
+import 'package:nsp2026/home/show.dart';
 import 'package:nsp2026/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/material.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:nsp2026/extra/all_voters.dart';
+import 'package:nsp2026/function/global.dart';
+import 'package:nsp2026/home/all_data.dart';
+import 'package:nsp2026/login/all_constituency.dart';
+import 'package:translator/translator.dart';
+import '../admin/all_admin.dart';
+import '../admin/view/add_view.dart';
+import '../model/finalvoterlist.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import '../extra/all_voters.dart';
+import '../login/all_constituency.dart';
+import '../model/finalvoterlist.dart';
+import 'init.dart';
 
 class Profile extends StatefulWidget {
-  const Profile({super.key});
-
-  @override
+  const Profile({super.key, required this.list, required this.id,   required this.onFallback,});
+  final List<FinalVoterList> list;
+  final String id;
+  final void Function(int index) onFallback;  @override
   State<Profile> createState() => _ProfileState();
 }
 
@@ -15,7 +32,7 @@ class _ProfileState extends State<Profile> {
   void initState(){
     v();
   }
-  v() async {
+  void v() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     s = await prefs.getString('username')??"NA";
@@ -62,8 +79,8 @@ class _ProfileState extends State<Profile> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                c1(w, Icon(Icons.privacy_tip_outlined), "SuperAdmin", "Yes"),
-                c1(w, Icon(Icons.upload), "Could Upload", "No"),
+                c1(w, Icon(Icons.privacy_tip_outlined), "SuperAdmin",user2.isadmin?"Yes": "No"),
+                c1(w, Icon(Icons.upload), "Could Upload",user2.isuploaddata?"Yes": "No"),
                 c1(w, Icon(Icons.warning), "Account Active", "Yes"),
               ],
             ),
@@ -77,17 +94,22 @@ class _ProfileState extends State<Profile> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text("Profiles",style: TextStyle(fontWeight: FontWeight.w600,fontSize: 19),),
+                    Text("Most Used Functions",style: TextStyle(fontWeight: FontWeight.w600,fontSize: 19),),
                     InkWell(
                         onTap: (){
-
+                          widget.onFallback(1);
                         },
-                        child: a(Icon(Icons.payment,color: Colors.green,),"Orders","Track all your Bookings in one place")),
+                        child: a(Icon(Icons.person_search,color: Colors.lightBlueAccent,),"Search Voters","Search Voters through respective Data")),
                     InkWell(
                         onTap: (){
-
+                          widget.onFallback(2);
                         },
-                        child: a(Icon(Icons.account_balance,color: Colors.green,),"Payments","View and Manage Payments")),
+                        child: a(Icon(Icons.upload,color: Colors.brown,),"Upload Voters","Upload New Voters through Respective Scanning")),
+                    InkWell(
+                        onTap: (){
+                          Global.launch("https://ayus.dev.xyz");
+                        },
+                        child: a(Icon(Icons.open_in_new,color: Colors.black,),"View Website","View your Website Oline People Could use")),
                   ],
                 ),
               ),
@@ -105,12 +127,51 @@ class _ProfileState extends State<Profile> {
                     Text("Support",style: TextStyle(fontWeight: FontWeight.w600,fontSize: 19),),
                     InkWell(
                         onTap: (){
+                          Global.launch("https://wa.me/917978097489");
                         },
                         child: a(Icon(Icons.support,color: Colors.green,),"Get Help","Get instant and view FAQs")),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 15,),
+            Container(
+              width: w,
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text("Voters Related",style: TextStyle(fontWeight: FontWeight.w600,fontSize: 19),),
                     InkWell(
                         onTap: (){
+                          if(Global.check(context)){
+                            return ;
+                          }
+                          Navigator.push(context, MaterialPageRoute(builder: (_)=>AllVoters(list: widget.list,id: widget.id,)));
+
                         },
-                        child: a(Icon(Icons.info,color: Colors.green,),"About Us","Known About us")),
+                        child: a(Icon(Icons.menu,color: Colors.blue,),"All Voters","Get the List of All Voters")),
+                    InkWell(
+                        onTap: (){
+                          if(Global.check(context)){
+                            return ;
+                          }
+                          Navigator.push(context, MaterialPageRoute(builder: (_)=>AllConstituency(isedit: true,)));
+
+                        },
+                        child: a(Icon(Icons.edit_note_sharp,color: Colors.orange),"Edit Constituency","Update Data of your Constituency")),
+                    InkWell(
+                        onTap: (){
+                          if(Global.check(context)){
+                            return ;
+                          }
+                          Navigator.push(context, MaterialPageRoute(builder: (_)=>EditVoters(id: widget.id, list: widget.list)));
+
+                        },
+                        child: a(Icon(Icons.person_remove_alt_1,color: Colors.red,),"Edit Voters","Edit the List of Voters Gracefully")),
                   ],
                 ),
               ),
@@ -128,6 +189,9 @@ class _ProfileState extends State<Profile> {
                     Text("For SuperAdmin",style: TextStyle(fontWeight: FontWeight.w600,fontSize: 19),),
                     InkWell(
                         onTap: (){
+                          if(Global.check(context)){
+                            return ;
+                          }
                           Navigator.push(context,MaterialPageRoute(builder: (_)=>AllAdmin()));
                         },
                         child: a(Icon(Icons.security_sharp,color: Colors.red,),"Admin Panel","Control Everything from SuperAdmin Panel")),
@@ -252,6 +316,3 @@ class _ProfileState extends State<Profile> {
   }
 }
 
-class Global{
-  static Color grey = Colors.white;
-}

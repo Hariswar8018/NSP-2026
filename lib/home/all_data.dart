@@ -4,11 +4,13 @@ import 'package:nsp2026/home/upload/scan.dart';
 import 'package:nsp2026/home/upload/upload%20data.dart';
 
 import '../admin/view/add_view.dart';
+import '../card/edit_voter.dart';
+import '../card/final_voter_receipt.dart' show VoterReceiptPage;
 import '../model/finalvoterlist.dart';
 
 class Home extends StatefulWidget {
-  final String id;final List<FinalVoterList> list;
-  const Home({super.key, required this.id,required this.list});
+  final String id;final List<FinalVoterList> list; final bool yes ;
+  const Home({super.key, required this.id,required this.list, this.yes = false});
 
   @override
   State<Home> createState() => _HomeState();
@@ -422,77 +424,98 @@ class _HomeState extends State<Home> {
               itemCount: filteredVoters.length,
               itemBuilder: (context, index) {
                 final v = filteredVoters[index];
-
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Container(
-                    height: 150,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(6),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Row(
-                            children: [
-                              CircleAvatar(
-                                backgroundColor: Colors.red,
-                                child: Text(
-                                  v.voterId,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w800,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    v.epicNo,
+                return InkWell(
+                  onTap: (){
+                    if(widget.yes){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => EditVoterPage(
+                            voter: v,
+                            collectionId: widget.id,
+                          ),
+                        ),
+                      );
+                      return ;
+                    }
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => VoterReceiptPage(voter: v, id: widget.id,),
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Container(
+                      height: 150,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(6),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Row(
+                              children: [
+                                CircleAvatar(
+                                  backgroundColor: Colors.red,
+                                  child: Text(
+                                    v.voterId,
                                     style: const TextStyle(
-                                      fontWeight: FontWeight.w900,
-                                      fontSize: 18,
+                                      fontWeight: FontWeight.w800,
+                                      color: Colors.white,
                                     ),
                                   ),
-                                  Text(
-                                    "Name: ${v.name} ( ${v.nameEn} )",
-                                    style: const TextStyle(fontSize: 13),
-                                  ),
-                                ],
-                              ),
-                              const Spacer(),
-                              Text(
-                                "${v.gender}/${v.genderEn[0]}",
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w900,
-                                  fontSize: 18,
                                 ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              const Icon(Icons.work),
-                              Text(
-                                " Father: ${v.fatherName} (${v.fatherNameEn})",
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              const Icon(Icons.home),
-                              Text(" House: ${v.houseNo}"),
-                              const SizedBox(width: 12),
-                              const Icon(Icons.person),
-                              Text(" Age: ${v.age}"),
-                            ],
-                          ),
-                        ],
+                                const SizedBox(width: 8),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      v.epicNo,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w900,
+                                        fontSize: 18,
+                                      ),
+                                    ),
+                                    Text(
+                                      "Name: ${v.name} ( ${v.nameEn} )",
+                                      style: const TextStyle(fontSize: 13),
+                                    ),
+                                  ],
+                                ),
+                                const Spacer(),
+                                Text(
+                                  "${v.gender}/${v.genderEn[0]}",
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                const Icon(Icons.work),
+                                Text(
+                                  " Father: ${v.fatherName} (${v.fatherNameEn})",
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                const Icon(Icons.home),
+                                Text(" House: ${v.houseNo}"),
+                                const SizedBox(width: 12),
+                                const Icon(Icons.person),
+                                Text(" Age: ${v.age}"),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),

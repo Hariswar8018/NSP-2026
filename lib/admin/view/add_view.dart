@@ -20,7 +20,6 @@ class _ViewTextListPageState extends State<ViewTextListPage> {
     super.dispose();
   }
 
-  /// 🔹 Add new ViewText to Firestore
   Future<void> _addViewText(String name) async {
     final id = DateTime.now().toString();
 
@@ -80,6 +79,7 @@ class _ViewTextListPageState extends State<ViewTextListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+
         title: Text("Select from ${widget.village.substring(0,1).toUpperCase()}${widget.village.substring(1)} List"),
       ),
       body: StreamBuilder<QuerySnapshot>(

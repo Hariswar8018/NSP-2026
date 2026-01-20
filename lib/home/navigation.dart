@@ -9,6 +9,13 @@ import 'package:nsp2026/home/profile.dart';
 import 'package:nsp2026/home/show.dart';
 import 'package:nsp2026/home/upload.dart';
 import 'package:nsp2026/model/finalvoterlist.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../admin/all_admin.dart';
+import '../function/global.dart';
+import '../login/all_constituency.dart';
+import '../main.dart';
+import 'init.dart';
 
 class Navigation extends StatefulWidget {
   final String id;
@@ -23,6 +30,13 @@ class _NavigationState extends State<Navigation> {
   final _pageController = PageController(initialPage: 0);
   final NotchBottomBarController _controller = NotchBottomBarController(index: 0);
 
+  void openFallbackScreen(int index) {
+    _controller.jumpTo(index);        // bottom bar sync
+    _pageController.jumpToPage(index);
+    setState(() {
+
+    });
+  }
 
   int maxCount = 5;
 
@@ -36,9 +50,9 @@ class _NavigationState extends State<Navigation> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> bottomBarPages = [
-      Show(id: widget.id,list: widget.list,),
+      Show(id: widget.id,list: widget.list,  onFallback: openFallbackScreen,),
       Home(id: widget.id,list: widget.list),
-      Up(id: widget.id), Profile(),
+      Up(id: widget.id), Profile(id: widget.id,list: widget.list,  onFallback: openFallbackScreen,),
     ];
     return WillPopScope(
         onWillPop: () async {
@@ -75,36 +89,168 @@ class _NavigationState extends State<Navigation> {
 
           return shouldExit ?? false; // true = allow back
         },
-      child: Scaffold(
+      child: user2.ison? Scaffold(
         backgroundColor: Colors.white,
         drawer: Drawer(
           child: ListView(
             padding: EdgeInsets.zero,
-            children: const [
+            children:[
               DrawerHeader(
                 decoration: BoxDecoration(
-                  color: Colors.blue,
+                  color: Colors.black,
                 ),
-                child: Text(
-                  'Menu',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
+                child: Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Image.asset("assets/logo-removebg-preview.png",width: 50,),
+                      Text(
+                        'NSP 2026',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                        ),
+                      ),
+                      Text(
+                        'One Place for all your Voter Id Data',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
+              SizedBox(height: 10,),
               ListTile(
-                leading: Icon(Icons.person),
-                title: Text('Search'),
+                subtitle: Text("Go to Home Screen"),
+                trailing: Icon(Icons.arrow_forward),
+                onTap: (){
+                  Navigator.pop(context);
+                  openFallbackScreen(0);
+                },
+                leading: Icon(Icons.home_filled,color: Colors.red,),
+                title: Text('Home',style: TextStyle(color: Colors.red, fontWeight: FontWeight.w800),),
               ),
               ListTile(
-                leading: Icon(Icons.settings),
-                title: Text('Admin'),
+                subtitle: Text("Search an Voter Person"),
+                trailing: Icon(Icons.arrow_forward),
+                onTap: (){
+                  Navigator.pop(context);
+                  openFallbackScreen(1);
+                },
+                leading: Icon(Icons.search,color: Colors.blue,),
+                title: Text('Search',style: TextStyle(color: Colors.blue, fontWeight: FontWeight.w800),),
               ),
               ListTile(
-                leading: Icon(Icons.logout),
-                title: Text('All Data'),
+                subtitle: Text("Upload New Voter Data"),
+                trailing: Icon(Icons.arrow_forward),
+                onTap: (){
+                  Navigator.pop(context);
+                  openFallbackScreen(2);
+                },
+                leading: Icon(Icons.upload,color: Colors.green,),
+                title: Text('Upload',style: TextStyle(color: Colors.green, fontWeight: FontWeight.w800),),
               ),
+              ListTile(
+                subtitle: Text("Check Profile for Settings"),
+                trailing: Icon(Icons.arrow_forward),
+                onTap: (){
+                  Navigator.pop(context);
+                  openFallbackScreen(3);
+                },
+                leading: Icon(Icons.person,color: Colors.deepOrange,),
+                title: Text('Profile',style: TextStyle(color: Colors.deepOrange, fontWeight: FontWeight.w800),),
+              ),
+              SizedBox(height: 30,),
+              Padding(
+                padding: const EdgeInsets.only(left: 28),
+                child: Text("Manage Control",style: TextStyle(
+                    fontWeight: FontWeight.w800,color: Colors.black,fontSize: 18),),
+              ),
+              ListTile(
+                subtitle: Text("Control & Manage Access"),
+                trailing: Icon(Icons.arrow_forward),
+                onTap: (){
+                  if(Global.check(context)){
+                    return ;
+                  }
+                  Navigator.push(context,MaterialPageRoute(builder: (_)=>AllAdmin()));
+                },
+                leading: Icon(Icons.privacy_tip_outlined,color: Colors.blue,),
+                title: Text('Admin',style: TextStyle(color: Colors.blue, fontWeight: FontWeight.w800),),
+              ),
+              ListTile(
+                subtitle: Text("Check & Edit Constituency"),
+                trailing: Icon(Icons.arrow_forward),
+                onTap: (){
+                  if(Global.check(context)){
+                    return ;
+                  }
+                  Navigator.push(context, MaterialPageRoute(builder: (_)=>AllConstituency(isedit: true,)));
+                },
+                leading: Icon(Icons.add_home_work,color: Colors.deepPurple,),
+                title: Text('My Constituency',style: TextStyle(color: Colors.deepPurple, fontWeight: FontWeight.w800),),
+              ),
+              SizedBox(height: 30,),
+              Padding(
+                padding: const EdgeInsets.only(left: 28),
+                child: Text("Other Functions",style: TextStyle(
+                    fontWeight: FontWeight.w800,color: Colors.black,fontSize: 18),),
+              ),
+              ListTile(
+                subtitle: Text("Reach Support for Query"),
+                trailing: Icon(Icons.arrow_forward),
+                onTap: (){
+                  Global.launch("https://wa.me/917978097489");
+                },
+                leading: Icon(Icons.support,color: Colors.green,),
+                title: Text('Support',style: TextStyle(color: Colors.green, fontWeight: FontWeight.w800),),
+              ),
+              ListTile(
+                onTap: (){
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(0), // Rectangle (no rounded edges)
+                        ),
+                        title: const Text("Log out ?"),
+                        content: const Text("You sure to Log out from the App"),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, false), // Cancel
+                            child: const Text("Cancel"),
+                          ),
+                          ElevatedButton(
+                            onPressed: () async {
+                              final SharedPreferences prefs = await SharedPreferences.getInstance();
+                              await prefs.setString('username', "NA");
+                              await prefs.setString('id',"NA");
+                              Navigator.pop(context);
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>MyApp()));
+                            },
+                            style: ButtonStyle(
+                              backgroundColor: WidgetStateProperty.resolveWith(
+                                    (states) => Colors.red,   // your color here
+                              ),
+                            ),
+                            child: const Text("OK",style: TextStyle(color: Colors.white)),
+                          )
+                        ],
+                      );});
+
+                },
+                subtitle: Text("Restart App from Beginning"),
+                trailing: Icon(Icons.arrow_forward),
+                leading: Icon(Icons.login,color: Colors.red),
+                title: Text('Log out',style: TextStyle(color: Colors.red, fontWeight: FontWeight.w800),),
+              ),
+              SizedBox(height: 70,)
             ],
           ),
         ),
@@ -123,9 +269,47 @@ class _NavigationState extends State<Navigation> {
             ),
           ),
           actions: [
-            IconButton(onPressed: (){}, icon: Icon(Icons.search,color: Colors.yellow,)),
-            IconButton(onPressed: (){}, icon: Icon(Icons.person,color: Colors.blue,)),
-            IconButton(onPressed: (){}, icon: Icon(Icons.login,color: Colors.red,)),
+            IconButton(onPressed: (){
+              openFallbackScreen(1);
+            }, icon: Icon(Icons.search,color: Colors.yellow,)),
+            IconButton(onPressed: (){
+              openFallbackScreen(3);
+            }, icon: Icon(Icons.person,color: Colors.blue,)),
+            IconButton(onPressed: (){
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(0), // Rectangle (no rounded edges)
+                    ),
+                    title: const Text("Log out ?"),
+                    content: const Text("You sure to Log out from the App"),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, false), // Cancel
+                        child: const Text("Cancel"),
+                      ),
+                      ElevatedButton(
+                        onPressed: () async {
+                          final SharedPreferences prefs = await SharedPreferences.getInstance();
+                          await prefs.setString('username', "NA");
+                          await prefs.setString('id',"NA");
+                          Navigator.pop(context);
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>MyApp()));
+                        },
+                        style: ButtonStyle(
+                          backgroundColor: WidgetStateProperty.resolveWith(
+                                (states) => Colors.red,   // your color here
+                          ),
+                        ),
+                        child: const Text("OK",style: TextStyle(color: Colors.white)),
+                      )
+                    ],
+                  );
+                },
+              );
+            }, icon: Icon(Icons.login,color: Colors.red,)),
           ],
         ),
         body: PageView(
@@ -199,6 +383,57 @@ class _NavigationState extends State<Navigation> {
           kIconSize: 24.0,
         )
             : null,
+      ):Scaffold(
+        appBar: AppBar(
+          title: Text("ACCESS REMOVED",style: TextStyle(color: Colors.red,fontWeight: FontWeight.w900),),
+          actions: [
+            IconButton(onPressed: (){
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(0), // Rectangle (no rounded edges)
+                    ),
+                    title: const Text("Log out ?"),
+                    content: const Text("You sure to Log out from the App"),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, false), // Cancel
+                        child: const Text("Cancel"),
+                      ),
+                      ElevatedButton(
+                        onPressed: () async {
+                          final SharedPreferences prefs = await SharedPreferences.getInstance();
+                          await prefs.setString('username', "NA");
+                          await prefs.setString('id',"NA");
+                          Navigator.pop(context);
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>MyApp()));
+                        },
+                        style: ButtonStyle(
+                          backgroundColor: WidgetStateProperty.resolveWith(
+                                (states) => Colors.red,   // your color here
+                          ),
+                        ),
+                        child: const Text("OK",style: TextStyle(color: Colors.white)),
+                      )
+                    ],
+                  );
+                },
+              );
+            }, icon: Icon(Icons.login,color: Colors.red,)),
+          ],
+        ),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image.asset("assets/14256604.png",width: 100,),
+            SizedBox(height: 20,),
+            Text("SuperAdmin Removed your Access !",style: TextStyle(fontSize:20,fontWeight: FontWeight.w900),),
+            Text(textAlign: TextAlign.center,"Please Logout and Find Another Username and Password from SuperAdmin")
+          ],
+        ),
       ),
     );
   }
