@@ -1,3 +1,4 @@
+import 'package:adaptive_theme/adaptive_theme.dart' show AdaptiveTheme, AdaptiveThemeMode;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:nsp2026/home/upload/scan.dart';
@@ -195,7 +196,6 @@ class _HomeState extends State<Home> {
       body: Column(
         children: [
           on?Container(
-            color: Colors.white,
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 10.0),
               child: Row(
@@ -235,7 +235,6 @@ class _HomeState extends State<Home> {
             child: Container(
               width: w-15,height: 320,
               decoration: BoxDecoration(
-                color: Colors.white,
                 border: Border.all(
                   color: Colors.grey.shade300,width: 3
                 ),
@@ -254,7 +253,7 @@ class _HomeState extends State<Home> {
                       onSaved: (_) => applyFilter(),
                       controller: name,
                       decoration:  InputDecoration(
-                        labelText:hindi?"व्यक्ति का नाम": 'Name of Electoral',
+                        hintText:hindi?"व्यक्ति का नाम": 'Name of Electoral',
                         isDense: true,
                         border: OutlineInputBorder(),
                       ),
@@ -343,10 +342,16 @@ class _HomeState extends State<Home> {
                           width: w/2-25,
                           height: 50,
                           decoration: BoxDecoration(
-                            color: Colors.red,
+                              gradient: LinearGradient(
+                                end: Alignment.topLeft,
+                                begin: Alignment.bottomRight,
+                                colors: [
+                                  Colors.blue.shade900, Colors.lightBlueAccent,
+                                ],
+                              ),
                             borderRadius: BorderRadius.circular(3)
                           ),
-                          child: Center(child: Text("Search 🔍",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w800,fontSize: 17),)),
+                          child: Center(child: Text("🔍  Search",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w800,fontSize: 17),)),
                         ),
                       ),
                       InkWell(
@@ -359,12 +364,18 @@ class _HomeState extends State<Home> {
                           width: 50,
                           height: 50,
                           decoration: BoxDecoration(
-                            color: hindi?Colors.yellow: Colors.black,
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  Colors.yellowAccent.shade700, Colors.yellow.shade100,
+                                ],
+                              ),
                             borderRadius: BorderRadius.circular(5)
                           ),
                           child: Center(
                             child: Text(hindi?"अ":"A",style: TextStyle(
-                                color: hindi?Colors.black:Colors.white,
+                                color: hindi?Colors.black:Colors.black,
                                 fontWeight: FontWeight.w900,fontSize: 23),),
                           ),
                         ),
@@ -379,7 +390,13 @@ class _HomeState extends State<Home> {
                           width: 50,
                           height: 50,
                           decoration: BoxDecoration(
-                              color: !b2?Colors.blue.shade200: Colors.pinkAccent.shade200,
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  Colors.blue.shade700, Colors.blue.shade100,
+                                ],
+                              ),
                               borderRadius: BorderRadius.circular(5)
                           ),
                           child: Center(
@@ -399,7 +416,13 @@ class _HomeState extends State<Home> {
                           width: 50,
                           height: 50,
                           decoration: BoxDecoration(
-                              color:  Colors.orange,
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  Colors.orange.shade900, Colors.orangeAccent.shade100,
+                                ],
+                              ),
                               borderRadius: BorderRadius.circular(5)
                           ),
                           child: Center(
@@ -424,102 +447,7 @@ class _HomeState extends State<Home> {
               itemCount: filteredVoters.length,
               itemBuilder: (context, index) {
                 final v = filteredVoters[index];
-                return InkWell(
-                  onTap: (){
-                    if(widget.yes){
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => EditVoterPage(
-                            voter: v,
-                            collectionId: widget.id,
-                          ),
-                        ),
-                      );
-                      return ;
-                    }
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => VoterReceiptPage(voter: v, id: widget.id,),
-                      ),
-                    );
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: Container(
-                      height: 150,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(6),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Row(
-                              children: [
-                                CircleAvatar(
-                                  backgroundColor: Colors.red,
-                                  child: Text(
-                                    v.voterId,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w800,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      v.epicNo,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w900,
-                                        fontSize: 18,
-                                      ),
-                                    ),
-                                    Text(
-                                      "Name: ${v.name} ( ${v.nameEn} )",
-                                      style: const TextStyle(fontSize: 13),
-                                    ),
-                                  ],
-                                ),
-                                const Spacer(),
-                                Text(
-                                  "${v.gender}/${v.genderEn[0]}",
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w900,
-                                    fontSize: 18,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                const Icon(Icons.work),
-                                Text(
-                                  " Father: ${v.fatherName} (${v.fatherNameEn})",
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                const Icon(Icons.home),
-                                Text(" House: ${v.houseNo}"),
-                                const SizedBox(width: 12),
-                                const Icon(Icons.person),
-                                Text(" Age: ${v.age}"),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                );
+                return CardVoter(v: v, id: widget.id, yes: widget.yes);
               },
             ),
           ),
@@ -545,4 +473,175 @@ class _HomeState extends State<Home> {
   final TextEditingController wardsankyaC = TextEditingController();
   final TextEditingController sammilitjaswagramC = TextEditingController();
 
+}
+
+class CardVoter extends StatefulWidget {
+  final FinalVoterList v ; bool yes;String id;
+  CardVoter({super.key,required this.v,required this.id, required this.yes});
+
+  @override
+  State<CardVoter> createState() => _CardVoterState();
+}
+
+class _CardVoterState extends State<CardVoter> {
+  @override
+  void initState(){
+    isLight =  AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light;
+    super.initState();
+  }
+  bool isLight = false;
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: (){
+        if(widget.yes){
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => EditVoterPage(
+                voter: widget.v,
+                collectionId: widget.id,
+              ),
+            ),
+          );
+          return ;
+        }
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => VoterReceiptPage(voter: widget.v, id: widget.id,),
+          ),
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 8),
+        child: Container(
+          height: 150,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              border: Border.all(
+                  color: Colors.grey.shade50,
+                  width: 0.5
+              ),
+            color: isLight? Color(0xffF5F5F5):Colors.black,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                blurRadius: 10,
+                spreadRadius: 2,
+                offset: Offset(0, 8), // X, Y
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 6,horizontal: 12),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      height: 45,width: 45,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          end: Alignment.topCenter,
+                          begin: Alignment.bottomCenter,
+                          colors: [
+                            Colors.yellow,
+                            Colors.orangeAccent, Colors.yellow,
+                          ],
+                        ),
+                        shape: BoxShape.circle
+                      ),
+                      child: Center(
+                        child: Text(
+                          widget.v.voterId,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w900,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              widget.v.epicNo,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w900,
+                                fontSize: 18,
+                              ),
+                            ),
+                            SizedBox(width: 9,),
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(6),
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Colors.yellow,
+                                    Colors.orangeAccent,
+                                  ],
+                                ),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 5),
+                                child: Text(
+                                  "वार्ड संख्या : "+widget.v.wardsankya,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w900,
+                                    color: Colors.black,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Text(
+                          "Name: ${widget.v.name} ( ${widget.v.nameEn} )",
+                          style: const TextStyle(fontSize: 13),
+                        ),
+                      ],
+                    ),
+                    const Spacer(),
+                    Text(
+                      "${widget.v.gender}/${widget.v.genderEn[0]}",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w900,
+                        fontSize: 18,
+                      ),
+                    ),
+                    SizedBox(width: 10,)
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Icon(Icons.work),
+                    Text(
+                      " Father: ${widget.v.fatherName} (${widget.v.fatherNameEn})",
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Icon(Icons.home),
+                    Text(" House: ${widget.v.houseNo}"),
+                    const SizedBox(width: 12),
+                    const Icon(Icons.person),
+                    Text(" Age: ${widget.v.age}"),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }

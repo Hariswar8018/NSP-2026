@@ -1,8 +1,10 @@
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:nsp2026/login/all_constituency.dart';
 import 'package:nsp2026/home/all_data.dart';
+import 'package:nsp2026/login/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'firebase_options.dart';
@@ -14,22 +16,35 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+  final savedThemeMode = await AdaptiveTheme.getThemeMode();
+  runApp( MyApp(savedThemeMode: savedThemeMode));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({super.key,this.savedThemeMode});
+  final AdaptiveThemeMode? savedThemeMode;
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'NSP 2026',
-      theme: ThemeData(
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+    return AdaptiveTheme(
+      light: ThemeData.light(useMaterial3: true).copyWith(
+        textTheme: ThemeData.light(useMaterial3: true)
+            .textTheme
+            .apply(fontFamily: 'OpenSans'),
       ),
-      debugShowCheckedModeBanner: false,
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      dark: ThemeData.dark(useMaterial3: true).copyWith(
+        textTheme: ThemeData.dark(useMaterial3: true)
+            .textTheme
+            .apply(fontFamily: 'OpenSans'),
+      ),
+      initial: savedThemeMode ?? AdaptiveThemeMode.light,
+      builder: (theme, darkTheme) => MaterialApp(
+        title: 'NSP 2026',
+        theme: theme,
+        darkTheme: darkTheme,
+        home: MyHomePage(title: ""),
+      ),
     );
   }
 }
@@ -55,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     String s = await prefs.getString('username')??"NA";
-    String s1 = await prefs.getString('id')??"NA";
+    String s1 = "NSP1768802521725373";
     if(s!="NA"){
       Navigator.pushReplacement(
         context,
@@ -69,7 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (_) => const AllConstituency(),
+            builder: (_) =>  Login(str: s1),
           ),
         );
       });

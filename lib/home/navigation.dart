@@ -1,6 +1,7 @@
 
 
 
+import 'package:adaptive_theme/adaptive_theme.dart' show AdaptiveTheme, AdaptiveThemeMode;
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -31,14 +32,17 @@ class _NavigationState extends State<Navigation> {
   final NotchBottomBarController _controller = NotchBottomBarController(index: 0);
 
   void openFallbackScreen(int index) {
-    _controller.jumpTo(index);        // bottom bar sync
+    if(index==3){
+      index=2;
+    }
+    _controller.jumpTo(index);
     _pageController.jumpToPage(index);
     setState(() {
 
     });
   }
 
-  int maxCount = 5;
+  int maxCount = 3;
 
   @override
   void dispose() {
@@ -52,10 +56,14 @@ class _NavigationState extends State<Navigation> {
     final List<Widget> bottomBarPages = [
       Show(id: widget.id,list: widget.list,  onFallback: openFallbackScreen,),
       Home(id: widget.id,list: widget.list),
-      Up(id: widget.id), Profile(id: widget.id,list: widget.list,  onFallback: openFallbackScreen,),
+      Profile(id: widget.id,list: widget.list,  onFallback: openFallbackScreen,),
     ];
     return WillPopScope(
         onWillPop: () async {
+          if(_controller.index!=0){
+            openFallbackScreen(0);
+            return false;
+          }
           final shouldExit = await showDialog<bool>(
             context: context,
             builder: (context) {
@@ -90,14 +98,13 @@ class _NavigationState extends State<Navigation> {
           return shouldExit ?? false; // true = allow back
         },
       child: user2.ison? Scaffold(
-        backgroundColor: Colors.white,
         drawer: Drawer(
           child: ListView(
             padding: EdgeInsets.zero,
             children:[
               DrawerHeader(
                 decoration: BoxDecoration(
-                  color: Colors.black,
+                  color: Colors.black
                 ),
                 child: Padding(
                   padding: EdgeInsets.all(8.0),
@@ -107,10 +114,10 @@ class _NavigationState extends State<Navigation> {
                     children: [
                       Image.asset("assets/logo-removebg-preview.png",width: 50,),
                       Text(
-                        'NSP 2026',
+                        'VSL 2026',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 24,
+                          fontSize: 24,fontWeight: FontWeight.w900
                         ),
                       ),
                       Text(
@@ -126,53 +133,39 @@ class _NavigationState extends State<Navigation> {
               ),
               SizedBox(height: 10,),
               ListTile(
-                subtitle: Text("Go to Home Screen"),
                 trailing: Icon(Icons.arrow_forward),
                 onTap: (){
                   Navigator.pop(context);
                   openFallbackScreen(0);
                 },
-                leading: Icon(Icons.home_filled,color: Colors.red,),
-                title: Text('Home',style: TextStyle(color: Colors.red, fontWeight: FontWeight.w800),),
+                leading: Icon(Icons.home_filled,),
+                title: Text('Home',style: TextStyle( fontWeight: FontWeight.w800),),
               ),
               ListTile(
-                subtitle: Text("Search an Voter Person"),
                 trailing: Icon(Icons.arrow_forward),
                 onTap: (){
                   Navigator.pop(context);
                   openFallbackScreen(1);
                 },
-                leading: Icon(Icons.search,color: Colors.blue,),
-                title: Text('Search',style: TextStyle(color: Colors.blue, fontWeight: FontWeight.w800),),
+                leading: Icon(Icons.search,),
+                title: Text('Search',style: TextStyle( fontWeight: FontWeight.w800),),
               ),
               ListTile(
-                subtitle: Text("Upload New Voter Data"),
-                trailing: Icon(Icons.arrow_forward),
-                onTap: (){
-                  Navigator.pop(context);
-                  openFallbackScreen(2);
-                },
-                leading: Icon(Icons.upload,color: Colors.green,),
-                title: Text('Upload',style: TextStyle(color: Colors.green, fontWeight: FontWeight.w800),),
-              ),
-              ListTile(
-                subtitle: Text("Check Profile for Settings"),
                 trailing: Icon(Icons.arrow_forward),
                 onTap: (){
                   Navigator.pop(context);
                   openFallbackScreen(3);
                 },
-                leading: Icon(Icons.person,color: Colors.deepOrange,),
-                title: Text('Profile',style: TextStyle(color: Colors.deepOrange, fontWeight: FontWeight.w800),),
+                leading: Icon(Icons.person,),
+                title: Text('Profile',style: TextStyle( fontWeight: FontWeight.w800),),
               ),
               SizedBox(height: 30,),
-              Padding(
-                padding: const EdgeInsets.only(left: 28),
+              user2.isadmin?Padding(
+                padding: const EdgeInsets.only(left: 20),
                 child: Text("Manage Control",style: TextStyle(
-                    fontWeight: FontWeight.w800,color: Colors.black,fontSize: 18),),
-              ),
-              ListTile(
-                subtitle: Text("Control & Manage Access"),
+                    fontWeight: FontWeight.w800,fontSize: 18),),
+              ):SizedBox(),
+              user2.isadmin?ListTile(
                 trailing: Icon(Icons.arrow_forward),
                 onTap: (){
                   if(Global.check(context)){
@@ -180,35 +173,22 @@ class _NavigationState extends State<Navigation> {
                   }
                   Navigator.push(context,MaterialPageRoute(builder: (_)=>AllAdmin()));
                 },
-                leading: Icon(Icons.privacy_tip_outlined,color: Colors.blue,),
-                title: Text('Admin',style: TextStyle(color: Colors.blue, fontWeight: FontWeight.w800),),
-              ),
-              ListTile(
-                subtitle: Text("Check & Edit Constituency"),
-                trailing: Icon(Icons.arrow_forward),
-                onTap: (){
-                  if(Global.check(context)){
-                    return ;
-                  }
-                  Navigator.push(context, MaterialPageRoute(builder: (_)=>AllConstituency(isedit: true,)));
-                },
-                leading: Icon(Icons.add_home_work,color: Colors.deepPurple,),
-                title: Text('My Constituency',style: TextStyle(color: Colors.deepPurple, fontWeight: FontWeight.w800),),
-              ),
+                leading: Icon(Icons.privacy_tip_outlined,),
+                title: Text('Admin',style: TextStyle( fontWeight: FontWeight.w800),),
+              ):SizedBox(),
               SizedBox(height: 30,),
               Padding(
-                padding: const EdgeInsets.only(left: 28),
+                padding: const EdgeInsets.only(left: 20),
                 child: Text("Other Functions",style: TextStyle(
-                    fontWeight: FontWeight.w800,color: Colors.black,fontSize: 18),),
+                    fontWeight: FontWeight.w800,fontSize: 18),),
               ),
               ListTile(
-                subtitle: Text("Reach Support for Query"),
                 trailing: Icon(Icons.arrow_forward),
                 onTap: (){
                   Global.launch("https://wa.me/917978097489");
                 },
-                leading: Icon(Icons.support,color: Colors.green,),
-                title: Text('Support',style: TextStyle(color: Colors.green, fontWeight: FontWeight.w800),),
+                leading: Icon(Icons.support,),
+                title: Text('Support',style: TextStyle( fontWeight: FontWeight.w800),),
               ),
               ListTile(
                 onTap: (){
@@ -243,9 +223,7 @@ class _NavigationState extends State<Navigation> {
                           )
                         ],
                       );});
-
                 },
-                subtitle: Text("Restart App from Beginning"),
                 trailing: Icon(Icons.arrow_forward),
                 leading: Icon(Icons.login,color: Colors.red),
                 title: Text('Log out',style: TextStyle(color: Colors.red, fontWeight: FontWeight.w800),),
@@ -269,6 +247,9 @@ class _NavigationState extends State<Navigation> {
             ),
           ),
           actions: [
+            IconButton(onPressed: (){
+              AdaptiveTheme.of(context).toggleThemeMode();
+            }, icon: Icon(Icons.sunny,color: Colors.white,)),
             IconButton(onPressed: (){
               openFallbackScreen(1);
             }, icon: Icon(Icons.search,color: Colors.yellow,)),
@@ -321,7 +302,6 @@ class _NavigationState extends State<Navigation> {
         bottomNavigationBar: (bottomBarPages.length <= maxCount)
             ? AnimatedNotchBottomBar(
           notchBottomBarController: _controller,
-          color: Colors.white,
           showLabel: true,
           textOverflow: TextOverflow.visible,
           maxLine: 1,
@@ -353,17 +333,6 @@ class _NavigationState extends State<Navigation> {
                 color: Colors.white,
               ),
               itemLabel: 'Search',
-            ),
-            BottomBarItem(
-              inActiveItem: Icon(
-                Icons.upload,
-                color: Colors.blueGrey,
-              ),
-              activeItem: Icon(
-                Icons.upload_file_rounded,
-                color: Colors.white,
-              ),
-              itemLabel: 'Upload',
             ),
             BottomBarItem(
               inActiveItem: Icon(

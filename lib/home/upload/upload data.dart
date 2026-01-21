@@ -201,10 +201,9 @@ class _UploadState extends State<Upload> {
     nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
 
     // 5️⃣ English translations
-    final nameEn = await translateSafe(name);
-    final fatherNameEn = await translateSafe(fatherName);
+    final nameEn ="NA";
+    final fatherNameEn = "NA";
 
-    // 6️⃣ Gender mapping
     final genderEn = (gender == 'म' || gender == 'में')
         ? 'F'
         : (gender == 'पु')
@@ -239,26 +238,6 @@ class _UploadState extends State<Upload> {
     );
   }
 
-
-  Future<String> translateSafe(String text) async {
-    if (text.trim().isEmpty) return text;
-
-    // Skip if already English
-    if (!RegExp(r'[\u0900-\u097F]').hasMatch(text)) {
-      return text;
-    }
-
-    return await translate(text); // your GoogleTranslator function
-  }
-  Future<String> translate(String input) async {
-    final translator = GoogleTranslator();
-    final translation = await translator.translate(
-      input,
-      from: 'hi',
-      to: 'en',
-    );
-    return translation.text;
-  }
   Future<void> onParseButtonPressed(String rawText) async {
     final rows = normalizeVoterLines(rawText);
 

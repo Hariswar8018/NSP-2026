@@ -1,4 +1,5 @@
 
+import 'package:adaptive_theme/adaptive_theme.dart' show AdaptiveTheme, AdaptiveThemeMode;
 import 'package:flutter/material.dart';
 import 'package:nsp2026/admin/all_admin.dart';
 import 'package:nsp2026/home/show.dart';
@@ -36,10 +37,13 @@ class _ProfileState extends State<Profile> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     s = await prefs.getString('username')??"NA";
+    isLight =  AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light;
     setState(() {
 
     });
   }
+   bool isLight=false;
+
   String s = "";
   @override
   Widget build(BuildContext context) {
@@ -87,7 +91,6 @@ class _ProfileState extends State<Profile> {
             SizedBox(height: 13,),
             Container(
               width: w,
-              color: Colors.white,
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Column(
@@ -117,34 +120,13 @@ class _ProfileState extends State<Profile> {
             SizedBox(height: 15,),
             Container(
               width: w,
-              color: Colors.white,
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text("Support",style: TextStyle(fontWeight: FontWeight.w600,fontSize: 19),),
-                    InkWell(
-                        onTap: (){
-                          Global.launch("https://wa.me/917978097489");
-                        },
-                        child: a(Icon(Icons.support,color: Colors.green,),"Get Help","Get instant and view FAQs")),
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(height: 15,),
-            Container(
-              width: w,
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text("Voters Related",style: TextStyle(fontWeight: FontWeight.w600,fontSize: 19),),
+                    Text("Support & All Data",style: TextStyle(fontWeight: FontWeight.w600,fontSize: 19),),
                     InkWell(
                         onTap: (){
                           if(Global.check(context)){
@@ -156,30 +138,16 @@ class _ProfileState extends State<Profile> {
                         child: a(Icon(Icons.menu,color: Colors.blue,),"All Voters","Get the List of All Voters")),
                     InkWell(
                         onTap: (){
-                          if(Global.check(context)){
-                            return ;
-                          }
-                          Navigator.push(context, MaterialPageRoute(builder: (_)=>AllConstituency(isedit: true,)));
-
+                          Global.launch("https://wa.me/917978097489");
                         },
-                        child: a(Icon(Icons.edit_note_sharp,color: Colors.orange),"Edit Constituency","Update Data of your Constituency")),
-                    InkWell(
-                        onTap: (){
-                          if(Global.check(context)){
-                            return ;
-                          }
-                          Navigator.push(context, MaterialPageRoute(builder: (_)=>EditVoters(id: widget.id, list: widget.list)));
-
-                        },
-                        child: a(Icon(Icons.person_remove_alt_1,color: Colors.red,),"Edit Voters","Edit the List of Voters Gracefully")),
+                        child: a(Icon(Icons.support,color: Colors.green,),"Get Help","Get instant and view FAQs")),
                   ],
                 ),
               ),
             ),
             SizedBox(height: 15,),
-            Container(
+            user2.isadmin?Container(
               width: w,
-              color: Colors.white,
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Column(
@@ -192,17 +160,25 @@ class _ProfileState extends State<Profile> {
                           if(Global.check(context)){
                             return ;
                           }
+                          Navigator.push(context, MaterialPageRoute(builder: (_)=>EditVoters(id: widget.id, list: widget.list)));
+
+                        },
+                        child: a(Icon(Icons.person_remove_alt_1,color: Colors.red,),"Edit Voters","Edit the List of Voters Gracefully")),
+                    InkWell(
+                        onTap: (){
+                          if(Global.check(context)){
+                            return ;
+                          }
                           Navigator.push(context,MaterialPageRoute(builder: (_)=>AllAdmin()));
                         },
                         child: a(Icon(Icons.security_sharp,color: Colors.red,),"Admin Panel","Control Everything from SuperAdmin Panel")),
                   ],
                 ),
               ),
-            ),
+            ):SizedBox(),
             SizedBox(height: 15,),
             Container(
               width: w,
-              color: Colors.white,
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 14.0,vertical: 4),
                 child: Column(
@@ -258,7 +234,6 @@ class _ProfileState extends State<Profile> {
             Container(
               width: w,
               height: 250,
-              color: Colors.white,
               child: Padding(
                 padding: const EdgeInsets.only(top: 8.0),
                 child: Column(
@@ -284,8 +259,7 @@ class _ProfileState extends State<Profile> {
         child: a1
     ),
     title: Text(str,style: TextStyle(fontWeight: FontWeight.w700),),
-    subtitle: Text(str2,style: TextStyle(fontWeight: FontWeight.w300),),
-    trailing: Icon(Icons.arrow_forward_ios,color: Colors.grey.shade400,),
+    trailing: Icon(Icons.arrow_forward_ios,color: Colors.grey.shade400,size: 18,),
   );
 
   Widget c1(double w , Widget c1,String str, String str2){
@@ -293,8 +267,10 @@ class _ProfileState extends State<Profile> {
       width: w/3-10,
       height: 85,
       decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(4)
+          borderRadius: BorderRadius.circular(4),
+        border: Border.all(
+          color: isLight?Colors.black:Colors.grey,width: 0.3
+        )
       ),
       child: Padding(
         padding: const EdgeInsets.all(10.0),

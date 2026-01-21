@@ -59,6 +59,17 @@ class _VoterReceiptPageState extends State<VoterReceiptPage> {
   }
   final GlobalKey _receiptKey = GlobalKey();
   bool on = false, progress = false;
+
+  Widget t(double w, String str){
+    return Text(
+      str,
+      style: TextStyle(
+        color: Colors.black,
+        fontSize: w * 0.05,            // responsive text
+        fontWeight: FontWeight.w600,
+      ),
+    );
+  }
   @override
   Widget build(BuildContext context) {
     double w = MediaQuery.of(context).size.width;
@@ -95,75 +106,46 @@ class _VoterReceiptPageState extends State<VoterReceiptPage> {
       body: on?RepaintBoundary(
         key: _receiptKey,
         child: Container(
-          width: w,
-          height: MediaQuery.of(context).size.height,
-          color: Colors.white,
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4.0,vertical: 10),
-                  child: Container(
-                    width: w-10,
-                    decoration:BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                            color: Colors.grey.shade300
-                        )
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 12),
-                      child: Column(
-                        children: [
-                          Text("VOTER INFORMATION",style: TextStyle(
-                            color: Colors.blue, fontWeight: FontWeight.w900
-                          ),),
-                          _section("Personal Details"),
-                          receiptRow(label: "Name ", value: widget.voter.name),
-                          receiptRow(label: "EPIC No", value: widget.voter.epicNo),
-                          receiptRow(label: "Father/Husband/etc Name", value: widget.voter.fatherName),
-                          receiptRow(label: "Gender", value: "${widget.voter.gender} / ${widget.voter.genderEn}"),
-                          receiptRow(label: "Age", value: widget.voter.age.toString()),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4.0,vertical: 10),
-                  child: Container(
-                    width: w-10,
-                    decoration:BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                        color: Colors.grey.shade300
-                      )
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 12),
-                      child: Column(
-                        children: [
-                          _section("Constituency Information"),
-                          receiptRow(label: "House No", value: widget.voter.houseNo),
-                          receiptRow(label: "Jila", value: widget.voter.jila),
-                          receiptRow(label: "Vikaskhand", value: widget.voter.vikaskhand),
-                          receiptRow(label: "Gram Panchayat", value: widget.voter.grampanchayat),
-                          receiptRow(label: "Matdan Kendra", value: widget.voter.matdankendra),
-                          receiptRow(label: "Matdan Sthal", value: widget.voter.matdansthal),
-                          receiptRow(label: "Ward Sankya", value: widget.voter.wardsankya),
-                          receiptRow(label: "Sammilit Jaswa Gram", value: widget.voter.sammilitjaswagram),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 70),
-              ],
-            ),
+          width: w,height : w * 0.5640625,
+          child: Stack(
+            children: [
+              Image.asset("assets/template.jpg",width: w,),
+              Positioned(
+                left: w * 0.34,
+                top: (w * 0.5640625) * 0.26,
+                child: t(w,widget.voter.wardsankya)
+              ),
+              Positioned(
+                  left: w * 0.755,
+                  top: (w * 0.5640625) * 0.26,
+                  child: t(w,widget.voter.serialNo.toString())
+              ),
+              Positioned(
+                  left: w * 0.254,
+                  top: (w * 0.5640625) * 0.443,
+                  child: t(w,widget.voter.name)
+              ),
+              Positioned(
+                  left: w * 0.47,
+                  top: (w * 0.5640625) * 0.55,
+                  child: t(w,widget.voter.fatherName)
+              ),
+              Positioned(
+                  left: w * 0.375,
+                  top: (w * 0.5640625) * 0.665,
+                  child: t(w,widget.voter.houseNo)
+              ),
+              Positioned(
+                  left: w * 0.257,
+                  top: (w * 0.5640625) * 0.78,
+                  child: t(w,widget.voter.age.toString())
+              ),
+              Positioned(
+                  left: w * 0.74,
+                  top: (w * 0.5640625) * 0.79,
+                  child: t(w,widget.voter.gender.toString())
+              ),
+            ],
           ),
         ),
       ):SingleChildScrollView(
@@ -239,14 +221,14 @@ class _VoterReceiptPageState extends State<VoterReceiptPage> {
                   child: Column(
                     children: [
                       _section("Constituency Information"),
-                      receiptRow(label: "House No", value: widget.voter.houseNo),
-                      receiptRow(label: "Jila", value: widget.voter.jila),
-                      receiptRow(label: "Vikaskhand", value: widget.voter.vikaskhand),
-                      receiptRow(label: "Gram Panchayat", value: widget.voter.grampanchayat),
-                      receiptRow(label: "Matdan Kendra", value: widget.voter.matdankendra),
-                      receiptRow(label: "Matdan Sthal", value: widget.voter.matdansthal),
-                      receiptRow(label: "Ward Sankya", value: widget.voter.wardsankya),
-                      receiptRow(label: "Sammilit Jaswa Gram", value: widget.voter.sammilitjaswagram),
+                      receiptRow(label: "मकान नं॰", value: widget.voter.houseNo),
+                      receiptRow(label: "वार्ड संख्या", value: widget.voter.wardsankya),
+                      receiptRow(label: "जिला", value: widget.voter.jila),
+                      receiptRow(label: "विकास खंड", value: widget.voter.vikaskhand),
+                      receiptRow(label: "ग्राम पंचायत", value: widget.voter.grampanchayat),
+                      receiptRow(label: "मतदान केंद्र", value: widget.voter.matdankendra),
+                      receiptRow(label: "मतदान स्थल", value: widget.voter.matdansthal),
+                      // receiptRow(label: "Sammilit Jaswa Gram", value: widget.voter.sammilitjaswagram),
                     ],
                   ),
                 ),
@@ -351,7 +333,7 @@ class _VoterReceiptPageState extends State<VoterReceiptPage> {
         title,
         style: const TextStyle(
           fontSize: 16,
-          fontWeight: FontWeight.w800,
+          fontWeight: FontWeight.w800,color: Colors.black
         ),
       ),
     );

@@ -92,7 +92,6 @@ class _ShowState extends State<Show> {
   Widget build(BuildContext context) {
     double w = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -144,7 +143,7 @@ class _ShowState extends State<Show> {
             SizedBox(height: 8,),
             Container(
               width: MediaQuery.of(context).size.width,
-              decoration: BoxDecoration(color: Colors.white),
+              decoration: BoxDecoration(),
               child: Column(
                 children: [
                   Row(
@@ -154,6 +153,7 @@ class _ShowState extends State<Show> {
                         width: w / 2 ,
                         height: w / 3 + 25,
                         decoration: BoxDecoration(
+                          color: Colors.white,
                           border: Border.all(color: Colors.red, width: 4),
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -168,11 +168,11 @@ class _ShowState extends State<Show> {
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(left: 8.0),
-                                child: Text("Total Voters",style: TextStyle(fontSize: 10,fontWeight: FontWeight.w600),),
+                                child: Text("Total Voters",style: TextStyle(fontSize: 10,fontWeight: FontWeight.w600,color: Colors.black),),
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(left: 8.0),
-                                child: Text("${total}",style: TextStyle(fontSize: 26,fontWeight: FontWeight.w800),),
+                                child: Text("${total}",style: TextStyle(fontSize: 26,fontWeight: FontWeight.w800,color: Colors.black),),
                               ),
                             ],
                           ),
@@ -196,7 +196,6 @@ class _ShowState extends State<Show> {
               child: Container(
                 width: w-15,
                 decoration: BoxDecoration(
-                    color: Colors.white,
                     border: Border.all(
                         color: Colors.grey.shade200
                     ),
@@ -217,24 +216,19 @@ class _ShowState extends State<Show> {
                             InkWell(
                                 onTap: (){
                                   widget.onFallback(1);
+
                                 },
                                 child: q(context,"assets/search.gif","Search")),
                             InkWell(
-                                onTap: () async {
-                                  if(Global.check(context)){
-                                    return ;
-                                  }
-                                    Navigator.push(context,MaterialPageRoute(builder: (_)=>AllAdmin()));
+                                onTap: (){
+                                  widget.onFallback(2);
                                 },
-                                child: q(context,"assets/14256604.png","Admin Panel")),
+                                child: q(context,"assets/website.gif","Profile")),
                             InkWell(
                                 onTap: (){
-                                  print(user2.isadmin);
-
-                                    widget.onFallback(2);
-
+                                  Global.launch("https://ayus.dev.xyz");
                                 },
-                                child: q(context,"assets/upload.gif","Upload")),
+                                child: q(context,"assets/support.png","Support")),
                             InkWell(
                                 onTap: (){
                                   Global.launch("https://ayus.dev.xyz");
@@ -249,7 +243,7 @@ class _ShowState extends State<Show> {
               ),
             ),
             my.isEmpty?SizedBox():SizedBox(height: 10,),
-            my.isEmpty?SizedBox():Container(
+            my.isEmpty?SizedBox():user2.isuploaddata?Container(
               width: w-20,
               height: 40,
               decoration: BoxDecoration(
@@ -272,13 +266,12 @@ class _ShowState extends State<Show> {
                   ],
                 ),
               ),
-            ),
+            ):SizedBox(),
             SizedBox(height: 10,),
             Center(
               child: Container(
                 width: w-15,
                 decoration: BoxDecoration(
-                    color: Colors.white,
                     border: Border.all(
                         color: Colors.grey.shade200
                     ),
@@ -290,7 +283,7 @@ class _ShowState extends State<Show> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("    Voters Related",style: TextStyle(fontWeight: FontWeight.w700),textAlign: TextAlign.start,),
+                        Text("    SuperAdmin Related",style: TextStyle(fontWeight: FontWeight.w700),textAlign: TextAlign.start,),
                         SizedBox(height: 9,),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -308,7 +301,7 @@ class _ShowState extends State<Show> {
                                   }
                                   Navigator.push(context, MaterialPageRoute(builder: (_)=>AllConstituency(isedit: true,)));
                                 },
-                                child: q(context,"assets/constituency.webp","Constituency")),
+                                child: q(context,"assets/14256604.png","Admin Panel")),
                             InkWell(
                                 onTap: () async {
                                   if(Global.check(context)){
@@ -323,7 +316,6 @@ class _ShowState extends State<Show> {
                                   Global.launch("https://wa.me/917978097489");
                                 },
                                 child: q(context,"assets/support.png","Support")),
-
                           ],
                         ),
                       ],
@@ -333,11 +325,10 @@ class _ShowState extends State<Show> {
               ),
             ),
             SizedBox(height: 10,),
-            Center(
+            /*Center(
               child: Container(
                 width: w-15,
                 decoration: BoxDecoration(
-                    color: Colors.white,
                     border: Border.all(
                       color: Colors.grey.shade200
                     ),
@@ -377,7 +368,7 @@ class _ShowState extends State<Show> {
                   ),
                 ),
               ),
-            ),
+            ),*/
             SizedBox(height: 130,),
           ],
         ),
@@ -443,6 +434,7 @@ class _ShowState extends State<Show> {
       width: w / 2 - 30,
       height: (w / 3 + 20) / 2,
       decoration: BoxDecoration(
+        color: Colors.white,
         border: Border.all(color: f?Colors.pinkAccent:Colors.blue, width: 4),
         borderRadius: BorderRadius.circular(10),
       ),
@@ -456,8 +448,8 @@ class _ShowState extends State<Show> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(f?"Total Female":"Total Male",style: TextStyle(fontSize: 11),),
-                Text("${giveback(f?female.toString():male.toString())}",style: TextStyle(fontWeight: FontWeight.w800,fontSize: 15),)
+                Text(f?"Total Female":"Total Male",style: TextStyle(fontSize: 11,color: Colors.black),),
+                Text("${giveback(f?female.toString():male.toString())}",style: TextStyle(fontWeight: FontWeight.w800,fontSize: 15,color: Colors.black),)
               ],
             )
           ],
