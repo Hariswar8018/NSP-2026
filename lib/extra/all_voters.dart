@@ -42,7 +42,6 @@ class _AllVotersState extends State<AllVoters> {
               child: Container(
                 height: 150,
                 decoration: BoxDecoration(
-                  color: Colors.white,
                   borderRadius: BorderRadius.circular(5),
                 ),
                 child: Padding(

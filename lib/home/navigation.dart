@@ -5,6 +5,8 @@ import 'package:adaptive_theme/adaptive_theme.dart' show AdaptiveTheme, Adaptive
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:motion_tab_bar/MotionTabBar.dart';
+import 'package:motion_tab_bar/MotionTabBarController.dart';
 import 'package:nsp2026/home/all_data.dart';
 import 'package:nsp2026/home/profile.dart';
 import 'package:nsp2026/home/show.dart';
@@ -27,29 +29,40 @@ class Navigation extends StatefulWidget {
   State<Navigation> createState() => _NavigationState();
 }
 
-class _NavigationState extends State<Navigation> {
-  final _pageController = PageController(initialPage: 0);
-  final NotchBottomBarController _controller = NotchBottomBarController(index: 0);
+class _NavigationState extends State<Navigation>     with SingleTickerProviderStateMixin {
+  late MotionTabBarController _motionController;
+  final PageController _pageController = PageController(initialPage: 0);
 
   void openFallbackScreen(int index) {
     if(index==3){
       index=2;
     }
-    _controller.jumpTo(index);
+    _motionController.index = index;
     _pageController.jumpToPage(index);
     setState(() {
 
     });
   }
 
+  @override
+  void initState() {
+    super.initState();
+    _motionController = MotionTabBarController(
+      initialIndex: 0,
+      length: 3,vsync: this,
+    );
+  }
+
+
   int maxCount = 3;
 
   @override
   void dispose() {
+    _motionController.dispose();
     _pageController.dispose();
-
     super.dispose();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -58,9 +71,10 @@ class _NavigationState extends State<Navigation> {
       Home(id: widget.id,list: widget.list),
       Profile(id: widget.id,list: widget.list,  onFallback: openFallbackScreen,),
     ];
+    double w = MediaQuery.of(context).size.width;
     return WillPopScope(
         onWillPop: () async {
-          if(_controller.index!=0){
+          if(_motionController.index!=0){
             openFallbackScreen(0);
             return false;
           }
@@ -94,7 +108,6 @@ class _NavigationState extends State<Navigation> {
               );
             },
           );
-
           return shouldExit ?? false; // true = allow back
         },
       child: user2.ison? Scaffold(
@@ -112,7 +125,9 @@ class _NavigationState extends State<Navigation> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Image.asset("assets/logo-removebg-preview.png",width: 50,),
+                      CircleAvatar(
+                          backgroundImage: AssetImage("assets/logo.jpg"),
+                          ),
                       Text(
                         'VSL 2026',
                         style: TextStyle(
@@ -237,25 +252,55 @@ class _NavigationState extends State<Navigation> {
           iconTheme: IconThemeData(
             color: Colors.white
           ),
-          title:  Text('NSP 2026',style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800),),
+          title:  Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: InkWell(
+              onTap: (){
+                openFallbackScreen(1);
+              },
+              child: Container(
+                width: w-100,
+                height: 45,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(25),
+                  color: Color(0xff222327)
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Row(
+                    children: [
+                      Icon(Icons.search,color: Colors.white,),
+                      SizedBox(width: 8),
+                      Text("Search",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w800,fontSize: 16),)
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
           leading: Builder(
-            builder: (context) => IconButton(
-              icon: const Icon(Icons.menu),
-              onPressed: () {
+            builder: (context) => Padding(
+              padding: const EdgeInsets.only(left: 4.0,top: 4,bottom: 4),
+              child: InkWell(
+              onTap: (){
                 Scaffold.of(context).openDrawer();
               },
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(image: AssetImage("assets/logo.jpg"))
+                  ),
+                )
+                        ),
             ),
           ),
           actions: [
             IconButton(onPressed: (){
               AdaptiveTheme.of(context).toggleThemeMode();
-            }, icon: Icon(Icons.sunny,color: Colors.white,)),
-            IconButton(onPressed: (){
-              openFallbackScreen(1);
-            }, icon: Icon(Icons.search,color: Colors.yellow,)),
-            IconButton(onPressed: (){
-              openFallbackScreen(3);
-            }, icon: Icon(Icons.person,color: Colors.blue,)),
+              setState(() {
+
+              });
+            }, icon:Global.check(context)? Icon(Icons.nightlife_sharp,color: Colors.white,): Icon(Icons.sunny,color: Colors.white,)),
             IconButton(onPressed: (){
               showDialog(
                 context: context,
@@ -291,67 +336,41 @@ class _NavigationState extends State<Navigation> {
                 },
               );
             }, icon: Icon(Icons.login,color: Colors.red,)),
+            SizedBox(width: 15,),
           ],
         ),
         body: PageView(
           controller: _pageController,
           physics: const NeverScrollableScrollPhysics(),
-          children: List.generate(bottomBarPages.length, (index) => bottomBarPages[index]),
+          onPageChanged: (index) {
+            _motionController.index = index;
+          },
+          children: bottomBarPages,
         ),
         extendBody: true,
-        bottomNavigationBar: (bottomBarPages.length <= maxCount)
-            ? AnimatedNotchBottomBar(
-          notchBottomBarController: _controller,
-          showLabel: true,
-          textOverflow: TextOverflow.visible,
-          maxLine: 1,
-          shadowElevation: 5,
-          kBottomRadius: 28.0,
-          notchColor: Colors.black87,
-          removeMargins: true,
-          bottomBarWidth: 500,
-          showShadow: false,
-          durationInMilliSeconds: 300,
-          itemLabelStyle: const TextStyle(fontSize: 10),
-          elevation: 1,
-          bottomBarItems: const [
-            BottomBarItem(
-              inActiveItem: Icon(
-                Icons.home_filled,
-                color: Colors.blueGrey,
-              ),
-              activeItem: Icon(
-                Icons.home_filled,
-                color: Colors.white,
-              ),
-              itemLabel: 'Overview',
-            ),
-            BottomBarItem(
-              inActiveItem: Icon(Icons.search, color: Colors.blueGrey),
-              activeItem: Icon(
-                Icons.person_search,
-                color: Colors.white,
-              ),
-              itemLabel: 'Search',
-            ),
-            BottomBarItem(
-              inActiveItem: Icon(
-                Icons.person,
-                color: Colors.blueGrey,
-              ),
-              activeItem: Icon(
-                Icons.person,
-                color: Colors.white,
-              ),
-              itemLabel: 'Profile',
-            ),
-          ],
-          onTap: (index) {
-            _pageController.jumpToPage(index);
-          },
-          kIconSize: 24.0,
-        )
-            : null,
+        bottomNavigationBar: MotionTabBar(
+        controller: _motionController,
+        initialSelectedTab: "Overview",
+        labels: const ["Overview", "Search", "Profile"],
+        icons: const [
+          Icons.home_filled,
+          Icons.search,
+          Icons.person,
+        ],
+        tabBarColor: Colors.black,
+        tabSelectedColor: Colors.blue,
+        tabIconColor: Colors.grey,
+        tabIconSelectedColor: Colors.white,
+        textStyle: const TextStyle(
+          color: Colors.white,
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+        ),
+        onTabItemSelected: (index) {
+          _pageController.jumpToPage(index);
+          _motionController.index = index;
+        },
+      ),
       ):Scaffold(
         appBar: AppBar(
           title: Text("ACCESS REMOVED",style: TextStyle(color: Colors.red,fontWeight: FontWeight.w900),),

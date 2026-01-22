@@ -33,6 +33,7 @@ class _AllAdminState extends State<AllAdmin> {
   }
   @override
   Widget build(BuildContext context) {
+    return SeeAllAdmin(cons: "NSP1768802521725373");
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -97,7 +98,7 @@ class _ConsclassState extends State<Consclass> {
           if(widget.i==0){
             Navigator.push(context, MaterialPageRoute(builder: (_)=>Login(str: widget.con.id,)));
           }else if(widget.i==1){
-            Navigator.push(context, MaterialPageRoute(builder: (_)=>SeeAllAdmin(cons: widget.con)));
+            Navigator.push(context, MaterialPageRoute(builder: (_)=>SeeAllAdmin(cons: widget.con.id)));
           }else if(widget.i==3){
             Navigator.push(context, MaterialPageRoute(builder: (_)=>AddECIConstituency(cons: widget.con)));
           }

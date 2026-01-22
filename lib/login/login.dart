@@ -46,7 +46,7 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.black,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
@@ -54,25 +54,47 @@ class _LoginState extends State<Login> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Image.asset(
-                'assets/logo.png',
+                'assets/logo-removebg-preview (1).png',
                 width: MediaQuery.of(context).size.width,
                 fit: BoxFit.cover,
               ),
               const SizedBox(height: 40),
               TextField(
                 controller: usernameC,
+                style: const TextStyle(color: Colors.white),
+                cursorColor: Colors.white,
                 decoration: const InputDecoration(
                   labelText: 'Username',
-                  border: OutlineInputBorder(),
+                  labelStyle: TextStyle(color: Colors.white),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white, width: 2),
+                  ),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
               TextField(
                 controller: passwordC,
                 obscureText: true,
+                style: const TextStyle(color: Colors.white),
+                cursorColor: Colors.white,
                 decoration: const InputDecoration(
                   labelText: 'Password',
-                  border: OutlineInputBorder(),
+                  labelStyle: TextStyle(color: Colors.white),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white, width: 2),
+                  ),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
                 ),
               ),
               const SizedBox(height: 30),
@@ -82,18 +104,18 @@ class _LoginState extends State<Login> {
                   width: MediaQuery.of(context).size.width - 20,
                   height: 55,
                   decoration: BoxDecoration(
-                    color: Colors.black,
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(color: Colors.grey.shade400),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.login,color: Colors.white,),
+                      Icon(Icons.login,color: Colors.black,),
                       SizedBox(width: 8),
                       Text(
                         "Login",
-                        style: TextStyle(fontWeight: FontWeight.w700,color: Colors.white),
+                        style: TextStyle(fontWeight: FontWeight.w700,color: Colors.black),
                       ),
                     ],
                   ),

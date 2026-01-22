@@ -3,6 +3,8 @@ import 'package:adaptive_theme/adaptive_theme.dart' show AdaptiveTheme, Adaptive
 import 'package:flutter/material.dart';
 import 'package:nsp2026/admin/all_admin.dart';
 import 'package:nsp2026/home/show.dart';
+import 'package:nsp2026/home/upload.dart';
+import 'package:nsp2026/home/upload/upload%20data.dart';
 import 'package:nsp2026/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
@@ -103,11 +105,11 @@ class _ProfileState extends State<Profile> {
                           widget.onFallback(1);
                         },
                         child: a(Icon(Icons.person_search,color: Colors.lightBlueAccent,),"Search Voters","Search Voters through respective Data")),
-                    InkWell(
+                    user2.isuploaddata?InkWell(
                         onTap: (){
-                          widget.onFallback(2);
+                          Navigator.push(context, MaterialPageRoute(builder: (_)=>Up(id: widget.id,)));
                         },
-                        child: a(Icon(Icons.upload,color: Colors.brown,),"Upload Voters","Upload New Voters through Respective Scanning")),
+                        child: a(Icon(Icons.upload,color: Colors.brown,),"Upload Voters","Upload New Voters through Respective Scanning")):SizedBox(),
                     InkWell(
                         onTap: (){
                           Global.launch("https://ayus.dev.xyz");
@@ -238,8 +240,8 @@ class _ProfileState extends State<Profile> {
                 padding: const EdgeInsets.only(top: 8.0),
                 child: Column(
                   children: [
-                    Center(child: Image.asset("assets/logo.png",width: w/3,)),
-                    Center(child: Text("NSP 2026 App v1.0.0",style: TextStyle(color: Colors.grey.shade500),)),
+                    Center(child: Image.asset("assets/logo.jpg",width: w/3,)),
+                    Center(child: Text("VSL 2026 App v1.0.0",style: TextStyle(color: Colors.grey.shade500),)),
                     SizedBox(height: 60,),
                    ],
                 ),

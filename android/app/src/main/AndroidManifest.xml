@@ -19,7 +19,7 @@
         android:maxSdkVersion="29"/>
 
     <application
-        android:label="NSP 2026"
+        android:label="vsl"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

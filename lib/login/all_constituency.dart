@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:nsp2026/admin/see_all_Admin.dart';
 import 'package:nsp2026/login/login.dart';
 
 import '../admin/all_admin.dart';
@@ -16,6 +17,7 @@ class AllConstituency extends StatefulWidget {
 class _AllConstituencyState extends State<AllConstituency> {
   @override
   Widget build(BuildContext context) {
+    return SeeAllAdmin(cons: "NSP1768802521725373");
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,

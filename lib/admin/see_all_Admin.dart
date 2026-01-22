@@ -6,7 +6,7 @@ import 'package:nsp2026/model/constituency.dart';
 import '../model/user.dart';
 
 class SeeAllAdmin extends StatefulWidget {
-  final Constituency cons;
+  final String cons;
   const SeeAllAdmin({super.key,required this.cons});
 
   @override
@@ -20,7 +20,7 @@ class _SeeAllAdminState extends State<SeeAllAdmin> {
       bool value,
       ) async {
     await FirebaseFirestore.instance
-        .collection(widget.cons.id).doc("logins").collection("logins")
+        .collection(widget.cons).doc("logins").collection("logins")
         .doc(id)
         .update({field: value});
   }
@@ -30,7 +30,7 @@ class _SeeAllAdminState extends State<SeeAllAdmin> {
       bool value,
       ) async {
     await FirebaseFirestore.instance
-        .collection(widget.cons.id).doc("logins").collection("logins")
+        .collection(widget.cons).doc("logins").collection("logins")
         .doc(id)
         .delete();
   }
@@ -42,7 +42,7 @@ class _SeeAllAdminState extends State<SeeAllAdmin> {
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
-            .collection(widget.cons.id).doc("logins").collection("logins")
+            .collection(widget.cons).doc("logins").collection("logins")
             .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
@@ -64,7 +64,6 @@ class _SeeAllAdminState extends State<SeeAllAdmin> {
             itemBuilder: (_, i) {
               final u = users[i];
               return Card(
-                color: Colors.white,
                 margin: const EdgeInsets.all(8),
                 child: Padding(
                   padding: const EdgeInsets.all(8),
@@ -114,7 +113,8 @@ class _SeeAllAdminState extends State<SeeAllAdmin> {
                             },
                           );
                         }, icon: Icon(Icons.delete)),
-                        subtitle: Text("Created User on : ${formatFromMicroseconds(u.id.toString())}"),
+                        subtitle: Text("Created User on : ${formatFromMicroseconds(u.id.toString())}",
+                        style: TextStyle(fontSize: 11),),
                       ),
 
                       SwitchListTile(
@@ -148,7 +148,6 @@ class _SeeAllAdminState extends State<SeeAllAdmin> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.red,
         onPressed: (){
-          Navigator.push(context,MaterialPageRoute(builder: (_)=>AddUser(cons: widget.cons,)));
         },child: Icon(Icons.add_reaction_sharp,color: Colors.white,),),
     );
   }

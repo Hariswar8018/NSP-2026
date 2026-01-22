@@ -1,9 +1,11 @@
+import 'package:adaptive_theme/adaptive_theme.dart' show AdaptiveTheme;
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:nsp2026/extra/all_voters.dart';
 import 'package:nsp2026/function/global.dart';
 import 'package:nsp2026/home/all_data.dart';
 import 'package:nsp2026/home/init.dart';
+import 'package:nsp2026/home/upload.dart' show Up;
 import 'package:nsp2026/login/all_constituency.dart';
 import 'package:translator/translator.dart';
 import '../admin/all_admin.dart';
@@ -88,6 +90,7 @@ class _ShowState extends State<Show> {
   }
 
 
+
   @override
   Widget build(BuildContext context) {
     double w = MediaQuery.of(context).size.width;
@@ -98,7 +101,7 @@ class _ShowState extends State<Show> {
             SizedBox(height: 8,),
             CarouselSlider(
               options: CarouselOptions(
-                height: 190,
+                height: 210,
                 aspectRatio: 16 / 9,
                 viewportFraction: 1,
                 initialPage: 0,
@@ -114,10 +117,9 @@ class _ShowState extends State<Show> {
               ),
               items:
                   [
-                    "assets/1.webp",
-                    "assets/2.png",
-                    "assets/3.jpg",
-                    "assets/4.png",
+                    "assets/18d61285-e584-42de-9bb0-2d7dee71e7c0.jpg",
+                    "assets/53c2814d-4ecd-4733-8d9e-54a2b11b1fb4.jpg",
+                    "assets/d245ea8d-260a-4619-b467-197aefc0b6ac.jpg",
                   ].map((i) {
                     return Builder(
                       builder: (BuildContext context) {
@@ -125,7 +127,7 @@ class _ShowState extends State<Show> {
                           padding: const EdgeInsets.all(1.0),
                           child: Container(
                             width: w - 25,
-                            height: 150,
+                            height:210,
                             decoration: BoxDecoration(
                               border: Border.all(color: Colors.black, width: 2),
                               borderRadius: BorderRadius.circular(7),
@@ -223,7 +225,7 @@ class _ShowState extends State<Show> {
                                 onTap: (){
                                   widget.onFallback(2);
                                 },
-                                child: q(context,"assets/website.gif","Profile")),
+                                child: q(context,"assets/profile.gif","Profile")),
                             InkWell(
                                 onTap: (){
                                   Global.launch("https://ayus.dev.xyz");
@@ -311,6 +313,11 @@ class _ShowState extends State<Show> {
 
                                 },
                                 child: q(context,"assets/edit.webp","Edit Voters")),
+                            user2.isuploaddata?InkWell(
+                                onTap: (){
+                                  Navigator.push(context, MaterialPageRoute(builder: (_)=>Up(id: widget.id,)));;
+                                },
+                                child: q(context,"assets/upload.gif","Upload")):
                             InkWell(
                                 onTap: (){
                                   Global.launch("https://wa.me/917978097489");

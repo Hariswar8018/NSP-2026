@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
       ),
       initial: savedThemeMode ?? AdaptiveThemeMode.light,
       builder: (theme, darkTheme) => MaterialApp(
-        title: 'NSP 2026',
+        title: 'vsl',
         theme: theme,
         darkTheme: darkTheme,
         home: MyHomePage(title: ""),
@@ -95,13 +95,13 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
           body: Container(
-            color: Colors.white,
+            color: Colors.black,
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
             child: Padding(
               padding: const EdgeInsets.all(15.0),
               child: Image(
-                image: AssetImage('assets/logo.png'),
+                image: AssetImage('assets/logo-removebg-preview (1).png'),
                 fit: BoxFit.contain,
               ),
             ),
