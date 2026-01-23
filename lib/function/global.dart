@@ -18,12 +18,7 @@ class Global {
 
   static bool check(BuildContext context){
     if(!user2.isadmin){
-      const snackBar = SnackBar(
-        content: Text('Sorry ! You don\'t have Necessary Permission. Please contact Admin'),
-      );
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
       return true;
-
     }else{
 
       return false;
@@ -42,4 +37,18 @@ class Global {
     }
   }
 
+}
+class CacheState {
+  static bool usingHive = false;
+  static bool usingFirestore = false;
+
+  static void setHive() {
+    usingHive = true;
+    usingFirestore = false;
+  }
+
+  static void setFirestore() {
+    usingHive = false;
+    usingFirestore = true;
+  }
 }

@@ -148,6 +148,7 @@ class _SeeAllAdminState extends State<SeeAllAdmin> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.red,
         onPressed: (){
+          Navigator.push(context, MaterialPageRoute(builder: (_)=>AddUser(cons: widget.cons)));
         },child: Icon(Icons.add_reaction_sharp,color: Colors.white,),),
     );
   }

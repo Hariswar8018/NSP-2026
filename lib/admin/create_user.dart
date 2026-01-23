@@ -7,7 +7,7 @@ import '../model/user.dart' show LoginModel;
 
 class AddUser extends StatefulWidget {
   const AddUser({super.key,required this.cons});
-  final Constituency cons;
+  final String cons;
   @override
   State<AddUser> createState() => _AddUserState();
 }
@@ -40,7 +40,7 @@ class _AddUserState extends State<AddUser> {
     );
 
     await FirebaseFirestore.instance
-        .collection(widget.cons.id).doc("logins").collection("logins")
+        .collection(widget.cons).doc("logins").collection("logins")
         .doc(id)
         .set(user.toMap());
 

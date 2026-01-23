@@ -5,8 +5,35 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:nsp2026/home/navigation.dart';
 
+import '../function/global.dart';
 import '../model/finalvoterlist.dart';
 import '../model/user.dart';
+import 'package:hive/hive.dart';
+import '../model/finalvoterlist.dart';
+
+class VoterCache {
+
+  static Future<void> save(String id, List<FinalVoterList> voters) async {
+    final box = await Hive.openBox<FinalVoterList>('voters_$id');
+    await box.clear();
+    await box.addAll(voters);
+  }
+
+  static Future<List<FinalVoterList>> load(String id) async {
+    final box = await Hive.openBox<FinalVoterList>('voters_$id');
+    return box.values.toList();
+  }
+
+  static Future<bool> exists(String id) async {
+    final box = await Hive.openBox<FinalVoterList>('voters_$id');
+    return box.isNotEmpty;
+  }
+
+  static Future<void> clear(String id) async {
+    final box = await Hive.openBox<FinalVoterList>('voters_$id');
+    await box.clear();
+  }
+}
 
 class VoterRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -60,15 +87,60 @@ class _InitClaState extends State<InitCla> {
     loadVoters();
   }
   static LoginModel? user1 ;
-  Future<void> loadVoters() async {
+  Future<void> loadVoters({bool forceFirestore = false}) async {
+
+    // 1️⃣ If NOT forced, try Hive first
+    if (!forceFirestore) {
+      final hasLocal = await VoterCache.exists(widget.id);
+
+      if (hasLocal) {
+        allVoters = await VoterCache.load(widget.id);
+        filteredVoters = allVoters;
+
+        CacheState.setHive();   // 🔹 GLOBAL FLAG
+
+        user1 = await repo.fetchUser(widget.id, widget.username);
+        user2 = user1!;
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => Navigation(
+              id: widget.id,
+              list: filteredVoters,
+            ),
+          ),
+        );
+        _refreshFromFirestoreSilently();
+        return;
+      }
+    }
+
+    // 2️⃣ Firestore fetch
     allVoters = await repo.fetchVoters(widget.id);
-   user1 = await repo.fetchUser(widget.id,widget.username);
-   user2 = user1!;
+    await VoterCache.save(widget.id, allVoters);
+
     filteredVoters = allVoters;
-    setState(() => on = true);
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>Navigation(
-      id: widget.id, list: filteredVoters,
-    )));
+
+    CacheState.setFirestore();  // 🔹 GLOBAL FLAG
+
+    user1 = await repo.fetchUser(widget.id, widget.username);
+    user2 = user1!;
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => Navigation(
+          id: widget.id,
+          list: filteredVoters,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _refreshFromFirestoreSilently() async {
+    final remote = await repo.fetchVoters(widget.id);
+    await VoterCache.save(widget.id, remote);
   }
 
   bool on= false;

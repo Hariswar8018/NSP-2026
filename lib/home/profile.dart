@@ -1,6 +1,8 @@
 
 import 'package:adaptive_theme/adaptive_theme.dart' show AdaptiveTheme, AdaptiveThemeMode;
 import 'package:flutter/material.dart';
+import 'package:nsp2026/admin/admins/rectify.dart';
+import 'package:nsp2026/admin/admins/see.dart';
 import 'package:nsp2026/admin/all_admin.dart';
 import 'package:nsp2026/home/show.dart';
 import 'package:nsp2026/home/upload.dart';
@@ -106,6 +108,10 @@ class _ProfileState extends State<Profile> {
                         },
                         child: a(Icon(Icons.person_search,color: Colors.lightBlueAccent,),"Search Voters","Search Voters through respective Data")),
                     user2.isuploaddata?InkWell(
+                      onLongPress: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (_)=>Rectify2()));
+
+                      },
                         onTap: (){
                           Navigator.push(context, MaterialPageRoute(builder: (_)=>Up(id: widget.id,)));
                         },

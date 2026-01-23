@@ -235,6 +235,9 @@ class _UploadState extends State<Upload> {
       matdansthal: areaData['matdansthal'] ?? '',
       wardsankya: areaData['wardsankya'] ?? '',
       sammilitjaswagram: areaData['sammilitjaswagram'] ?? '',
+      transliteradone: false,
+      bool1: false,
+      bool2: false,
     );
   }
 

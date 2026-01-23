@@ -2,6 +2,8 @@ import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:nsp2026/login/all_constituency.dart';
 import 'package:nsp2026/home/all_data.dart';
 import 'package:nsp2026/login/login.dart';
@@ -10,9 +12,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
 import 'home/init.dart';
 import 'home/navigation.dart';
+import 'model/hive/final.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  Hive.registerAdapter(FinalVoterListAdapter());
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -48,7 +53,7 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
+String s1 = "NSP1768802521725373";
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
@@ -68,9 +73,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _navigate() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await Hive.deleteBoxFromDisk('voters_${widget.title}');
 
     String s = await prefs.getString('username')??"NA";
-    String s1 = "NSP1768802521725373";
     if(s!="NA"){
       Navigator.pushReplacement(
         context,

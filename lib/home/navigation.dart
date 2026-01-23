@@ -300,7 +300,7 @@ class _NavigationState extends State<Navigation>     with SingleTickerProviderSt
               setState(() {
 
               });
-            }, icon:Global.check(context)? Icon(Icons.nightlife_sharp,color: Colors.white,): Icon(Icons.sunny,color: Colors.white,)),
+            }, icon:Global.check(context)? Icon(Icons.nightlight_rounded,color: Colors.white,): Icon(Icons.sunny,color: Colors.white,)),
             IconButton(onPressed: (){
               showDialog(
                 context: context,

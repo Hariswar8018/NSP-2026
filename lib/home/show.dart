@@ -101,7 +101,7 @@ class _ShowState extends State<Show> {
             SizedBox(height: 8,),
             CarouselSlider(
               options: CarouselOptions(
-                height: 210,
+                height: 180,
                 aspectRatio: 16 / 9,
                 viewportFraction: 1,
                 initialPage: 0,
@@ -117,17 +117,17 @@ class _ShowState extends State<Show> {
               ),
               items:
                   [
-                    "assets/18d61285-e584-42de-9bb0-2d7dee71e7c0.jpg",
-                    "assets/53c2814d-4ecd-4733-8d9e-54a2b11b1fb4.jpg",
                     "assets/d245ea8d-260a-4619-b467-197aefc0b6ac.jpg",
+                    "assets/8d0ca727-5e4c-400e-947d-e575f7a61a10.jpg",
+                    "assets/ab4637b6-33d6-4dac-b4c3-0c5a81df9f3c.jpg",
                   ].map((i) {
                     return Builder(
                       builder: (BuildContext context) {
                         return Padding(
                           padding: const EdgeInsets.all(1.0),
                           child: Container(
-                            width: w - 25,
-                            height:210,
+                            width: w - 15,
+                            height:180,
                             decoration: BoxDecoration(
                               border: Border.all(color: Colors.black, width: 2),
                               borderRadius: BorderRadius.circular(7),
@@ -270,7 +270,7 @@ class _ShowState extends State<Show> {
               ),
             ):SizedBox(),
             SizedBox(height: 10,),
-            Center(
+            user2.isadmin?Center(
               child: Container(
                 width: w-15,
                 decoration: BoxDecoration(
@@ -330,7 +330,7 @@ class _ShowState extends State<Show> {
                   ),
                 ),
               ),
-            ),
+            ):SizedBox(),
             SizedBox(height: 10,),
             /*Center(
               child: Container(

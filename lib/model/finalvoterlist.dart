@@ -20,6 +20,18 @@ class FinalVoterList {
   final String wardsankya;
   final String sammilitjaswagram;
 
+  final bool transliteradone;
+  final bool bool1;
+  final bool bool2;
+  final bool bool3;
+  final bool bool4;
+  final bool bool5;
+  final bool bool6;
+  final bool bool7;
+  final bool bool8;
+  final bool bool9;
+
+
   FinalVoterList({
     required this.serialNo,
     required this.voterId,
@@ -41,6 +53,18 @@ class FinalVoterList {
     required this.matdansthal,
     required this.wardsankya,
     required this.sammilitjaswagram,
+
+    this.transliteradone = false,
+    this.bool1 = false,
+    this.bool2 = false,
+    this.bool3 = false,
+    this.bool4 = false,
+    this.bool5 = false,
+    this.bool6 = false,
+    this.bool7 = false,
+    this.bool8 = false,
+    this.bool9 = false,
+
   });
 
   Map<String, dynamic> toMap() {
@@ -65,6 +89,16 @@ class FinalVoterList {
       'matdansthal': matdansthal,
       'wardsankya': wardsankya,
       'sammilitjaswagram': sammilitjaswagram,
+      'transliteradone': transliteradone,
+      'bool1': bool1,
+      'bool2': bool2,
+      'bool3': bool3,
+      'bool4': bool4,
+      'bool5': bool5,
+      'bool6': bool6,
+      'bool7': bool7,
+      'bool8': bool8,
+      'bool9': bool9,
     };
   }
 
@@ -90,11 +124,16 @@ class FinalVoterList {
       matdansthal: map['matdansthal'] ?? '',
       wardsankya: map['wardsankya'] ?? '',
       sammilitjaswagram: map['sammilitjaswagram'] ?? '',
+      transliteradone: map['transliteradone'] ?? false,
+      bool1: map['bool1'] ?? false,
+      bool2: map['bool2'] ?? false,
+      bool3: map['bool3'] ?? false,
+      bool4: map['bool4'] ?? false,
+      bool5: map['bool5'] ?? false,
+      bool6: map['bool6'] ?? false,
+      bool7: map['bool7'] ?? false,
+      bool8: map['bool8'] ?? false,
+      bool9: map['bool9'] ?? false,
     );
-  }
-
-  @override
-  String toString() {
-    return '$serialNo $name → $nameEn ($epicNo)';
   }
 }
