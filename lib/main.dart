@@ -73,8 +73,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _navigate() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await Hive.deleteBoxFromDisk('voters_${widget.title}');
-
     String s = await prefs.getString('username')??"NA";
     if(s!="NA"){
       Navigator.pushReplacement(

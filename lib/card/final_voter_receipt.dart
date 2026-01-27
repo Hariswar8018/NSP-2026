@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:image_gallery_saver2_fixed/image_gallery_saver2_fixed.dart';
@@ -9,8 +10,11 @@ import 'dart:ui' as ui;
 import 'dart:typed_data';
 import '../function/global.dart';
 import '../model/finalvoterlist.dart' show FinalVoterList;
+import '../utils/save_image.dart';
 import 'edit_voter.dart';
 import 'package:permission_handler/permission_handler.dart';
+
+
 
 class VoterReceiptPage extends StatefulWidget {
   final FinalVoterList voter;
@@ -27,8 +31,11 @@ class VoterReceiptPage extends StatefulWidget {
 class _VoterReceiptPageState extends State<VoterReceiptPage> {
 
   void initState(){
-    ask();
-    requestWritePermission();
+    if (!kIsWeb) {
+      ask();
+      requestWritePermission();
+    }
+
   }
   Future<bool> ask() async {
     if (await Permission.photos.isGranted ||
@@ -127,7 +134,7 @@ class _VoterReceiptPageState extends State<VoterReceiptPage> {
               ),
               Positioned(
                   left: w * 0.47,
-                  top: (w * 0.5640625) * 0.55,
+                  top: (w * 0.5640625) * 0.548,
                   child: t(w,widget.voter.fatherName)
               ),
               Positioned(
@@ -243,12 +250,11 @@ class _VoterReceiptPageState extends State<VoterReceiptPage> {
           color: Colors.yellow,
         )):InkWell(
           onTap: () async {
-            setState(() => on = true);     // show receipt
+            if(!on){
+              setState(() => on = true);     // show receipt
+              return ;
+            }
             setState(() => progress = true);
-            await Future.delayed(
-              const Duration(milliseconds: 300),
-            );
-            await requestWritePermission();
             await saveReceiptToGallery();
             setState(() => progress = false);
 
@@ -258,7 +264,7 @@ class _VoterReceiptPageState extends State<VoterReceiptPage> {
             height: 55,
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
-                color: Colors.yellow,
+                color: on?Colors.yellow:Colors.grey.shade400,
                 border: Border.all(
                     color: Colors.black
                 )
@@ -266,7 +272,7 @@ class _VoterReceiptPageState extends State<VoterReceiptPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("Download Receipt",style: TextStyle(fontWeight: FontWeight.w800,color: Colors.black),),
+                Text(on?"Yes Download Now":"Download Receipt",style: TextStyle(fontWeight: FontWeight.w800,color: Colors.black),),
                 SizedBox(width: 12,),
                 Icon(Icons.picture_as_pdf),
               ],
@@ -276,22 +282,27 @@ class _VoterReceiptPageState extends State<VoterReceiptPage> {
       ],
     );
   }
-
   Future<void> saveReceiptToGallery() async {
     final bytes = await _captureReceipt();
 
-    final result = await ImageGallerySaver.saveImage(
-      bytes,
-      quality: 100,
-      name: "Voter_${widget.voter.voterId}",
-    );
-
-    debugPrint("Saved: $result");
+    await saveImage(bytes, "Voter_${widget.voter.voterId}");
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Receipt saved to Gallery")),
+      const SnackBar(content: Text("Receipt saved")),
     );
   }
+
+  Future<void> saveReceipt() async {
+    final bytes = await _captureReceipt();
+
+    await saveImage(bytes, "Voter_${widget.voter.voterId}");
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Receipt saved")),
+    );
+  }
+
+
   Future<Uint8List> _captureReceipt() async {
     final boundary =
     _receiptKey.currentContext!.findRenderObject() as RenderRepaintBoundary;

@@ -111,12 +111,11 @@ class _InitClaState extends State<InitCla> {
             ),
           ),
         );
-        _refreshFromFirestoreSilently();
+        // _refreshFromFirestoreSilently();
         return;
       }
     }
 
-    // 2️⃣ Firestore fetch
     allVoters = await repo.fetchVoters(widget.id);
     await VoterCache.save(widget.id, allVoters);
 

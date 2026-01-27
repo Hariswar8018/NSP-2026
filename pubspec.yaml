@@ -55,6 +55,11 @@ dependencies:
   hive_flutter: ^1.1.0
   hive: ^2.2.3
   device_info_plus: ^12.3.0
+  dio: ^5.9.0
+  cloud_functions: ^5.6.2
+  google_cloud_translation: ^0.0.4
+  google_translation: ^1.0.0
+  inditrans: ^0.12.1
 
 dev_dependencies:
   flutter_test:

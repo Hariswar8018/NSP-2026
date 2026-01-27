@@ -1,9 +1,12 @@
 
 import 'package:adaptive_theme/adaptive_theme.dart' show AdaptiveTheme, AdaptiveThemeMode;
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
+import 'package:inditrans/inditrans.dart' as inditrans;
 import 'package:nsp2026/admin/admins/rectify.dart';
 import 'package:nsp2026/admin/admins/see.dart';
 import 'package:nsp2026/admin/all_admin.dart';
+import 'package:nsp2026/admin/hj.dart';
 import 'package:nsp2026/home/show.dart';
 import 'package:nsp2026/home/upload.dart';
 import 'package:nsp2026/home/upload/upload%20data.dart';
@@ -24,6 +27,10 @@ import '../extra/all_voters.dart';
 import '../login/all_constituency.dart';
 import '../model/finalvoterlist.dart';
 import 'init.dart';
+
+
+import 'package:google_cloud_translation/google_cloud_translation.dart';
+
 
 class Profile extends StatefulWidget {
   const Profile({super.key, required this.list, required this.id,   required this.onFallback,});
@@ -117,9 +124,9 @@ class _ProfileState extends State<Profile> {
                         },
                         child: a(Icon(Icons.upload,color: Colors.brown,),"Upload Voters","Upload New Voters through Respective Scanning")):SizedBox(),
                     InkWell(
-                        onTap: (){
-                          Global.launch("https://ayus.dev.xyz");
-                        },
+                        onTap: () async {
+                          Global.launch("https://nsp2026.web.app/");
+                          },
                         child: a(Icon(Icons.open_in_new,color: Colors.black,),"View Website","View your Website Oline People Could use")),
                   ],
                 ),

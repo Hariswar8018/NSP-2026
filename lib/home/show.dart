@@ -228,12 +228,12 @@ class _ShowState extends State<Show> {
                                 child: q(context,"assets/profile.gif","Profile")),
                             InkWell(
                                 onTap: (){
-                                  Global.launch("https://ayus.dev.xyz");
+                                  Global.launch("https://wa.me/917978097489");
                                 },
                                 child: q(context,"assets/support.png","Support")),
                             InkWell(
                                 onTap: (){
-                                  Global.launch("https://ayus.dev.xyz");
+                                  Global.launch("https://nsp2026.web.app/");
                                 },
                                 child: q(context,"assets/website.gif","Website")),
                           ],

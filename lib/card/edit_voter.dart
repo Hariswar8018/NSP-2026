@@ -83,6 +83,17 @@ class _EditVoterPageState extends State<EditVoterPage> {
         ),
         title: const Text("Edit Voter",style: TextStyle(color: Colors.white),),
         backgroundColor: Colors.black,
+        actions: [
+          IconButton(
+              onLongPress: () async {
+                await FirebaseFirestore.instance
+                    .collection(widget.collectionId)
+                    .doc(widget.voter.voterId)
+                    .delete();
+                Navigator.pop(context);
+              },
+              onPressed: (){}, icon: Icon(Icons.delete,color: Colors.red,))
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
