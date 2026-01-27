@@ -11,41 +11,7 @@ class RectifySimple extends StatefulWidget {
 
 class _RectifySimpleState extends State<RectifySimple> {
 
-  final col = FirebaseFirestore.instance.collection('voters');
-
-  Future<String> hindiToRoman(String text) async {
-    await inditrans.init();
-
-    return inditrans.transliterate(
-      text,
-      inditrans.Script.devanagari,
-      inditrans.Script.readableLatin,
-      inditrans.Option.IgnoreVedicAccents,
-    );
-  }
-
-  // 🚀 Bulk Update Function
-  Future<void> updateAllEnglishNames() async {
-    final snap = await col.get();
-
-    for (final doc in snap.docs) {
-      final data = doc.data();
-
-      final hindi = data['name_hindi'] ?? '';
-      final english = data['name_english'] ?? '';
-
-      if (hindi.toString().isEmpty || english.toString().isNotEmpty) continue;
-
-      final roman = await hindiToRoman(hindi);
-
-      await doc.reference.update({
-        'name_english': roman,
-        'transliterated': true,
-      });
-    }
-
-    debugPrint("✅ All Hindi → English transliteration done");
-  }
+  final col = FirebaseFirestore.instance.collection('NSP1768802521725373');
 
   @override
   Widget build(BuildContext context) {
@@ -60,32 +26,28 @@ class _RectifySimpleState extends State<RectifySimple> {
           const SizedBox(width: 12),
         ],
       ),
-
       body: StreamBuilder<QuerySnapshot>(
-        stream: col.snapshots(),
+        stream: col.where('transliteradone', isEqualTo: false).snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
-
           final docs = snapshot.data!.docs;
 
+          if (docs.isEmpty) {
+            return const Center(
+              child: Text("✅ All records are transliterated"),
+            );
+          }
           return ListView.builder(
             itemCount: docs.length,
             itemBuilder: (context, i) {
               final doc = docs[i];
               final data = doc.data() as Map<String, dynamic>;
-
-              final hindi = data['name_hindi'] ?? '';
-              final english = data['name_english'] ?? '';
-
               return ListTile(
-                title: Text(hindi),
-                subtitle: Text(english.isEmpty ? "❌ Not transliterated" : english),
-                trailing: Icon(
-                  english.isEmpty ? Icons.close : Icons.check,
-                  color: english.isEmpty ? Colors.red : Colors.green,
-                ),
+                title: Text(data['name'] ?? ''),
+                subtitle: Text(data['fatherName'] ?? ''),
+                trailing: const Icon(Icons.pending, color: Colors.orange),
               );
             },
           );
@@ -93,4 +55,56 @@ class _RectifySimpleState extends State<RectifySimple> {
       ),
     );
   }
+  Future<String> hindiToRomanFormatted(String text) async {
+    await inditrans.init();
+
+    final raw = inditrans.transliterate(
+      text,
+      inditrans.Script.devanagari,
+      inditrans.Script.readableLatin,
+      inditrans.Option.IgnoreVedicAccents,
+    );
+
+    return toTitleCase(raw); // 👈 formatting here
+  }
+  Future<void> updateAllEnglishNames() async {
+    final snap = await col
+        .where('transliteradone', isEqualTo: false)
+        .get();
+
+    for (final doc in snap.docs) {
+      final data = doc.data();
+
+      final nameHindi = data['name'] ?? '';
+      final fatherHindi = data['fatherName'] ?? '';
+
+      if (nameHindi.toString().isEmpty && fatherHindi.toString().isEmpty) continue;
+
+      final nameEn = nameHindi.toString().isNotEmpty
+          ? await hindiToRomanFormatted(nameHindi)
+          : '';
+
+      final fatherEn = fatherHindi.toString().isNotEmpty
+          ? await hindiToRomanFormatted(fatherHindi)
+          : '';
+
+      await doc.reference.update({
+        'nameEn': nameEn,
+        'fatherNameEn': fatherEn,
+        'transliteradone': true,
+      });
+    }
+
+    debugPrint("✅ Transliteration completed for all pending records");
+  }
+
+  String toTitleCase(String input) {
+    return input
+        .toLowerCase()
+        .split(' ')
+        .where((w) => w.trim().isNotEmpty)
+        .map((word) => word[0].toUpperCase() + word.substring(1))
+        .join(' ');
+  }
+
 }

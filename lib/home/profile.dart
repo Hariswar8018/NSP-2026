@@ -117,7 +117,6 @@ class _ProfileState extends State<Profile> {
                     user2.isuploaddata?InkWell(
                       onLongPress: (){
                         Navigator.push(context, MaterialPageRoute(builder: (_)=>Rectify2()));
-
                       },
                         onTap: (){
                           Navigator.push(context, MaterialPageRoute(builder: (_)=>Up(id: widget.id,)));

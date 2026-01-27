@@ -9,6 +9,7 @@ import 'package:nsp2026/home/all_data.dart';
 import 'package:nsp2026/login/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'admin/admins/see.dart';
 import 'firebase_options.dart';
 import 'home/init.dart';
 import 'home/navigation.dart';
@@ -48,7 +49,7 @@ class MyApp extends StatelessWidget {
         title: 'vsl',
         theme: theme,
         darkTheme: darkTheme,
-        home: MyHomePage(title: ""),
+        home: ""==""?Rectify2():MyHomePage(title: ""),
       ),
     );
   }

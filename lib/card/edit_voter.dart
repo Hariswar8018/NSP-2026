@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:inditrans/inditrans.dart' as inditrans;
+import 'package:translator/translator.dart';
 
 import '../home/init.dart';
 import '../model/finalvoterlist.dart' show FinalVoterList;
@@ -76,6 +78,7 @@ class _EditVoterPageState extends State<EditVoterPage> {
 
   @override
   Widget build(BuildContext context) {
+    double w = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(
@@ -111,13 +114,48 @@ class _EditVoterPageState extends State<EditVoterPage> {
               keyboardType: TextInputType.number,
             ),
             editField(label: "EPIC No", controller: epicC),
-
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                InkWell(
+                  onTap: (){
+                    translate(false);
+                  },
+                  child: Container(
+                    width: w/2-20,
+                    height: 55,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade400,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Center(child: Text("Offline Transliterate",style: TextStyle(
+                        color: Colors.white,fontWeight: FontWeight.w900),)),
+                  ),
+                ),
+                InkWell(
+                  onTap: (){
+                    translate(true);
+                  },
+                  child: Container(
+                    width: w/2-20,
+                    height: 55,
+                    decoration: BoxDecoration(
+                      color: Colors.green.shade900,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Center(child: Text("Online Transliterate",style: TextStyle(
+                        color: Colors.white,fontWeight: FontWeight.w900),)),
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 20),
           ],
         ),
       ),
       persistentFooterButtons: [
-        SizedBox(
+        progress?Center(child: CircularProgressIndicator()):SizedBox(
           width: double.infinity,
           height: 55,
           child: ElevatedButton(
@@ -134,8 +172,64 @@ class _EditVoterPageState extends State<EditVoterPage> {
       ],
     );
   }
+  void translate(bool b)async{
+    setState(() {
+      progress=true;
+    });
+    if(b){
+      String myname = await hindiToRomanFormatted(nameC.text);
+      String myname2 = await hindiToRomanFormatted(fatherC.text);
+      setState(() {
+        nameEnC.text = myname;
+        fatherEnC.text = myname2;
+        progress=false;
+      });
+    }else{
+      String myname = await google(nameC.text);
+      String myname2 = await google(fatherC.text);
+      setState(() {
+        nameEnC.text = myname;
+        fatherEnC.text = myname2;
+        progress = false;
+      });
+    }
+  }
+  Future<String> hindiToRomanFormatted(String text) async {
+    await inditrans.init();
+
+    final raw = inditrans.transliterate(
+      text,
+      inditrans.Script.devanagari,
+      inditrans.Script.readableLatin,
+      inditrans.Option.IgnoreVedicAccents,
+    );
+
+    return toTitleCase(raw); // 👈 formatting here
+  }
+  String toTitleCase(String input) {
+    return input
+        .toLowerCase()
+        .split(' ')
+        .where((w) => w.trim().isNotEmpty)
+        .map((word) => word[0].toUpperCase() + word.substring(1))
+        .join(' ');
+  }
+  Future<String> google(String input) async {
+    final translator = GoogleTranslator();
+    final translation = await translator.translate(
+      input,
+      from: 'hi',
+      to: 'en',
+    );
+    return translation.text;
+  }
+  bool progress = false;
+
   Future<void> _updateVoter() async {
     try {
+      setState(() {
+        progress=true;
+      });
       final updatedMap = widget.voter.toMap()
         ..addAll({
           'houseNo': houseC.text.trim(),
@@ -152,9 +246,14 @@ class _EditVoterPageState extends State<EditVoterPage> {
           .collection(widget.collectionId)
           .doc(widget.voter.voterId)
           .update(updatedMap);
-
+      setState(() {
+        progress=false;
+      });
       Navigator.pop(context, true); // success
     } catch (e) {
+      setState(() {
+        progress=false;
+      });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Update failed: $e")),
       );

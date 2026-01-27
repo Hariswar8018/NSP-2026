@@ -2,6 +2,7 @@ import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:nsp2026/admin/admins/rectify%20english.dart';
 import 'package:nsp2026/api.dart';
 import 'package:translator/translator.dart' show GoogleTranslator;
 import 'package:cloud_functions/cloud_functions.dart';
@@ -23,149 +24,189 @@ class _Rectify2State extends State<Rectify2> {
   @override
   Widget build(BuildContext context) {
     double w = MediaQuery.of(context).size.width;
-    return Scaffold(
-      appBar: AppBar(title: Text("Rectify Data")),
-      body: Column(
-        children: [
-          Container(
-            height: 50,
-            width: w,
-            child: ListView.builder(
-              itemCount: 5,
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (BuildContext context, int index) {
-                return InkWell(
-                  onTap: () {
-                    setState(() {
-                      gindex = index;
-                    });
+    return WillPopScope(
+      onWillPop: () async {
+        final shouldExit = await showDialog<bool>(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(0),
+              ),
+              title: const Text("Close the App ?"),
+              content: const Text("You sure to Close the App"),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: const Text("Cancel"),
+                ),
+                ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: WidgetStateProperty.all(Colors.red),
+                  ),
+                  onPressed: () async {
+                    Navigator.pop(context, true);
                   },
-                  child: Container(
-                    width: w / 4,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(
-                        color: Colors.blue,
-                        width: gindex == index ? 2 : 0,
-                      ),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          textAlign: TextAlign.center,
-                          list[index],
-                          style: TextStyle(
-                            fontWeight: FontWeight.w900,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-          SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              InkWell(
-                onTap: on,
-                child: Container(
-                  width: w / 2 - 10,
-                  height: 25,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: !ison ? Colors.blue : Colors.white,
-                      width: 2,
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        textAlign: TextAlign.center,
-                        'No',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w900,
-                          color: Colors.green,
-                        ),
-                      ),
-                    ],
+                  child: const Text(
+                    "OK",
+                    style: TextStyle(color: Colors.white),
                   ),
                 ),
-              ),
-              InkWell(
-                onTap: on,
-                child: Container(
-                  width: w / 2 - 10,
-                  height: 25,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(
-                      color: ison ? Colors.blue : Colors.white,
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        textAlign: TextAlign.center,
-                        'Yes, Done ',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w900,
-                          color: Colors.red,
+              ],
+            );
+          },
+        );
+        return shouldExit ?? false; // true = allow back
+      },
+        child: Scaffold(
+          appBar: AppBar(title: Text("Rectify Data"),
+          actions: [
+            IconButton(onPressed: (){
+              Navigator.push(context, MaterialPageRoute(builder: (_)=>RectifySimple()));
+            }, icon: Icon(Icons.update))
+          ],),
+          body: Column(
+            children: [
+              Container(
+                height: 50,
+                width: w,
+                child: ListView.builder(
+                  itemCount: 5,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (BuildContext context, int index) {
+                    return InkWell(
+                      onTap: () {
+                        setState(() {
+                          gindex = index;
+                        });
+                      },
+                      child: Container(
+                        width: w / 4,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                            color: Colors.blue,
+                            width: gindex == index ? 2 : 0,
+                          ),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              textAlign: TextAlign.center,
+                              list[index],
+                              style: TextStyle(
+                                fontWeight: FontWeight.w900,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
+                    );
+                  },
+                ),
+              ),
+              SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  InkWell(
+                    onTap: on,
+                    child: Container(
+                      width: w / 2 - 10,
+                      height: 25,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: !ison ? Colors.blue : Colors.white,
+                          width: 2,
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            textAlign: TextAlign.center,
+                            'No',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w900,
+                              color: Colors.green,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
+                  InkWell(
+                    onTap: on,
+                    child: Container(
+                      width: w / 2 - 10,
+                      height: 25,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(
+                          color: ison ? Colors.blue : Colors.white,
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            textAlign: TextAlign.center,
+                            'Yes, Done ',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w900,
+                              color: Colors.red,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 10),
+              Flexible(
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection(id).where("${list2[gindex]}",isEqualTo: ison)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    final docs = snapshot.data!.docs;
+
+                    if (docs.isEmpty) return const Center(child: Text("No data"));
+                    final data = docs[0].data() as Map<String, dynamic>;
+                    final voter = FinalVoterList.fromMap(data);
+                    return ListView.builder(
+                      itemCount: docs.length,
+                      itemBuilder: (context, index) {
+                        final data = docs[index].data() as Map<String, dynamic>;
+                        final voter = FinalVoterList.fromMap(data);
+                        return CardVoter(
+                          v: voter,
+                          id: id,
+                          yes: gindex,
+                          tobetrue: !ison,
+                        );
+                      },
+                    );
+                  },
                 ),
               ),
             ],
           ),
-          SizedBox(height: 10),
-          Flexible(
-            child: StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection(id).where("${list2[gindex]}",isEqualTo: ison)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                final docs = snapshot.data!.docs;
-
-                if (docs.isEmpty) return const Center(child: Text("No data"));
-                final data = docs[0].data() as Map<String, dynamic>;
-                final voter = FinalVoterList.fromMap(data);
-                return ListView.builder(
-                  itemCount: docs.length,
-                  itemBuilder: (context, index) {
-                    final data = docs[index].data() as Map<String, dynamic>;
-                    final voter = FinalVoterList.fromMap(data);
-                    return CardVoter(
-                      v: voter,
-                      id: id,
-                      yes: gindex,
-                      tobetrue: !ison,
-                    );
-                  },
-                );
-              },
-            ),
-          ),
-        ],
-      ),
+        )
     );
   }
 
@@ -231,6 +272,7 @@ class _CardVoterState extends State<CardVoter> {
     double w = MediaQuery.of(context).size.width;
     return InkWell(
         onLongPress:update_based_on_param,
+
       onTap: (){
         Navigator.push(
           context,
