@@ -2,6 +2,7 @@ import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:nsp2026/admin/admins/check_and_update.dart';
 import 'package:nsp2026/admin/admins/rectify%20english.dart';
 import 'package:nsp2026/api.dart';
 import 'package:translator/translator.dart' show GoogleTranslator;
@@ -18,7 +19,9 @@ class Rectify2 extends StatefulWidget {
 }
 
 class _Rectify2State extends State<Rectify2> {
+
   int gindex = 0;
+
   String id = "NSP1768802521725373";
 
   @override
@@ -61,6 +64,9 @@ class _Rectify2State extends State<Rectify2> {
         child: Scaffold(
           appBar: AppBar(title: Text("Rectify Data"),
           actions: [
+            IconButton(onPressed: (){
+              Navigator.push(context, MaterialPageRoute(builder: (_)=>Rectify3()));
+            }, icon: Icon(Icons.two_k_plus_sharp)),
             IconButton(onPressed: (){
               Navigator.push(context, MaterialPageRoute(builder: (_)=>RectifySimple()));
             }, icon: Icon(Icons.update))
@@ -178,6 +184,7 @@ class _Rectify2State extends State<Rectify2> {
                 child: StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
                       .collection(id).where("${list2[gindex]}",isEqualTo: ison)
+                      .where("bool9",isEqualTo: false)
                       .snapshots(),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {

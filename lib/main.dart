@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:nsp2026/admin/admins/check_and_update.dart';
 import 'package:nsp2026/login/all_constituency.dart';
 import 'package:nsp2026/home/all_data.dart';
 import 'package:nsp2026/login/login.dart';
@@ -49,7 +50,7 @@ class MyApp extends StatelessWidget {
         title: 'vsl',
         theme: theme,
         darkTheme: darkTheme,
-        home: ""==""?Rectify2():MyHomePage(title: ""),
+        home: ""==""?Rectify3():MyHomePage(title: ""),
       ),
     );
   }
