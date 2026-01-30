@@ -5,11 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:nsp2026/admin/admins/check_and_update.dart';
+import 'package:nsp2026/admin/admins/more_serial.dart' show RectifySerialOverflow;
+import 'package:nsp2026/admin/admins/ward.dart' show RectifyWardValidator;
 import 'package:nsp2026/login/all_constituency.dart';
 import 'package:nsp2026/home/all_data.dart';
 import 'package:nsp2026/login/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'admin/admins/check.dart';
+import 'admin/admins/rectify english.dart';
 import 'admin/admins/see.dart';
 import 'firebase_options.dart';
 import 'home/init.dart';
@@ -49,8 +53,9 @@ class MyApp extends StatelessWidget {
       builder: (theme, darkTheme) => MaterialApp(
         title: 'vsl',
         theme: theme,
+        debugShowCheckedModeBanner: false,
         darkTheme: darkTheme,
-        home: ""==""?Rectify3():MyHomePage(title: ""),
+        home: "A"==""?RectifySimple():MyHomePage(title: ""),
       ),
     );
   }

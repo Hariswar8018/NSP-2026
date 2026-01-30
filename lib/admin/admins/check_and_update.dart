@@ -157,178 +157,190 @@ class _CardVoterState extends State<CardVoter> {
   @override
   Widget build(BuildContext context) {
     double w = MediaQuery.of(context).size.width;
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: ValueListenableBuilder<AdaptiveThemeMode>(
-        valueListenable: AdaptiveTheme.of(context).modeChangeNotifier,
-        builder: (context, mode, _) {
-          final isLight = mode == AdaptiveThemeMode.light;
-          return Container(
-            height: widget.yes==1?300:240,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              border: Border.all(color: Colors.grey.shade50, width: 0.5),
-              color: isLight ? Color(0xffF5F5F5) : Colors.black,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
-                  blurRadius: 10,
-                  spreadRadius: 2,
-                  offset: Offset(0, 8), // X, Y
-                ),
-              ],
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 6,
-                horizontal: 12,
+    return InkWell(
+      onTap: (){
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) =>
+                EditVoterPage(voter: widget.v, collectionId: widget.id),
+          ),
+        );
+      },
+
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 8),
+        child: ValueListenableBuilder<AdaptiveThemeMode>(
+          valueListenable: AdaptiveTheme.of(context).modeChangeNotifier,
+          builder: (context, mode, _) {
+            final isLight = mode == AdaptiveThemeMode.light;
+            return Container(
+              height: widget.yes==1?300:240,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                border: Border.all(color: Colors.grey.shade50, width: 0.5),
+                color: isLight ? Color(0xffF5F5F5) : Colors.black,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 10,
+                    spreadRadius: 2,
+                    offset: Offset(0, 8), // X, Y
+                  ),
+                ],
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Row(
-                    children: <Widget>[
-                      Container(
-                        height: 45,
-                        width: 45,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            end: Alignment.topCenter,
-                            begin: Alignment.bottomCenter,
-                            colors: [
-                              Colors.yellow,
-                              Colors.orangeAccent,
-                              Colors.yellow,
-                            ],
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 6,
+                  horizontal: 12,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Row(
+                      children: <Widget>[
+                        Container(
+                          height: 45,
+                          width: 45,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              end: Alignment.topCenter,
+                              begin: Alignment.bottomCenter,
+                              colors: [
+                                Colors.yellow,
+                                Colors.orangeAccent,
+                                Colors.yellow,
+                              ],
+                            ),
+                            shape: BoxShape.circle,
                           ),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Center(
-                          child: Text(
-                            widget.v.voterId,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w900,
-                              color: Colors.black,
+                          child: Center(
+                            child: Text(
+                              widget.v.voterId,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w900,
+                                color: Colors.black,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                widget.v.epicNo,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w900,
-                                  fontSize: 18,
-                                ),
-                              ),
-                              SizedBox(width: 9),
-                              Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(6),
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                    colors: [
-                                      Colors.yellow,
-                                      Colors.orangeAccent,
-                                    ],
+                        const SizedBox(width: 8),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  widget.v.epicNo,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 18,
                                   ),
                                 ),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10.0,
-                                    vertical: 5,
+                                SizedBox(width: 9),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(6),
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                      colors: [
+                                        Colors.yellow,
+                                        Colors.orangeAccent,
+                                      ],
+                                    ),
                                   ),
-                                  child: Text(
-                                    "वार्ड संख्या : " + widget.v.wardsankya,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w900,
-                                      color: Colors.black,
-                                      fontSize: 12,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10.0,
+                                      vertical: 5,
+                                    ),
+                                    child: Text(
+                                      "वार्ड संख्या : " + widget.v.wardsankya,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w900,
+                                        color: Colors.black,
+                                        fontSize: 12,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          Text(
-                            "Name: ${widget.v.name} ( ${widget.v.nameEn} )",
-                            style: const TextStyle(fontSize: 13),
-                          ),
-                        ],
-                      ),
-                      const Spacer(),
-                      Text(
-                        "${widget.v.gender}/${widget.v.genderEn[0]}",
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w900,
-                          fontSize: 18,
+                              ],
+                            ),
+                            Text(
+                              "Name: ${widget.v.name} ( ${widget.v.nameEn} )",
+                              style: const TextStyle(fontSize: 13),
+                            ),
+                          ],
                         ),
-                      ),
-                      InkWell(
-                        onTap: () async {
-                          try {
-                            await FirebaseFirestore.instance.collection(widget.id).doc(
-                                widget.v.voterId).update({
-                              "bool9": true,
-                            });
-                          }catch(e){
-                            print(e);
-                          }
-                        },
-                        child: Container(
-                          height: 60,width: 60,
-                          color: Colors.black,
+                        const Spacer(),
+                        Text(
+                          "${widget.v.gender}/${widget.v.genderEn[0]}",
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w900,
+                            fontSize: 18,
+                          ),
                         ),
-                      ),
-                      SizedBox(width: 10),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      const Icon(Icons.work),
-                      Text(
-                        " Father: ${widget.v.fatherName} (${widget.v.fatherNameEn})",
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      const Icon(Icons.home),
-                      Text(" House: ${widget.v.houseNo}"),
-                      const SizedBox(width: 12),
-                      const Icon(Icons.person),
-                      Text(" Age: ${widget.v.age}"),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      c(0, back(0)),
-                      c(2, back(2)),
-                    ],
-                  ),
+                        InkWell(
+                          onTap: () async {
+                            try {
+                              await FirebaseFirestore.instance.collection(widget.id).doc(
+                                  widget.v.voterId).update({
+                                "bool8": true,
+                              });
+                            }catch(e){
+                              print(e);
+                            }
+                          },
+                          child: Container(
+                            height: 60,width: 60,
+                            color: Colors.black,
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        const Icon(Icons.work),
+                        Text(
+                          " Father: ${widget.v.fatherName} (${widget.v.fatherNameEn})",
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        const Icon(Icons.home),
+                        Text(" House: ${widget.v.houseNo}"),
+                        const SizedBox(width: 12),
+                        const Icon(Icons.person),
+                        Text(" Age: ${widget.v.age}"),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        c(0, back(0)),
+                        c(2, back(2)),
+                      ],
+                    ),
 
-                  const SizedBox(height: 6),
+                    const SizedBox(height: 6),
 
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      c(3, back(3)),
-                      c(4, back(4)),
-                    ],
-                  ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        c(3, back(3)),
+                        c(4, back(4)),
+                      ],
+                    ),
 
-                ],
+                  ],
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

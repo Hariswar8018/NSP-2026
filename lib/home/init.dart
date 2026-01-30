@@ -13,6 +13,30 @@ import '../model/finalvoterlist.dart';
 
 class VoterCache {
 
+  static Future<void> updateOne(String id, FinalVoterList updated) async {
+    final box = await Hive.openBox<FinalVoterList>('voters_$id');
+
+    final index = box.values.toList().indexWhere(
+          (v) => v.voterId == updated.voterId,
+    );
+
+    if (index != -1) {
+      await box.putAt(index, updated);
+    }
+  }
+
+  static Future<void> deleteOne(String id, String voterId) async {
+    final box = await Hive.openBox<FinalVoterList>('voters_$id');
+
+    final index = box.values.toList().indexWhere(
+          (v) => v.voterId == voterId,
+    );
+
+    if (index != -1) {
+      await box.deleteAt(index);
+    }
+  }
+
   static Future<void> save(String id, List<FinalVoterList> voters) async {
     final box = await Hive.openBox<FinalVoterList>('voters_$id');
     await box.clear();
@@ -111,7 +135,7 @@ class _InitClaState extends State<InitCla> {
             ),
           ),
         );
-        // _refreshFromFirestoreSilently();
+         _refreshFromFirestoreSilently();
         return;
       }
     }

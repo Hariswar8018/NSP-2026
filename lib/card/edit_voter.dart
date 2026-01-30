@@ -93,6 +93,8 @@ class _EditVoterPageState extends State<EditVoterPage> {
                     .collection(widget.collectionId)
                     .doc(widget.voter.voterId)
                     .delete();
+
+                await VoterCache.deleteOne(widget.collectionId, widget.voter.voterId);
                 Navigator.pop(context);
               },
               onPressed: (){}, icon: Icon(Icons.delete,color: Colors.red,))
@@ -227,9 +229,8 @@ class _EditVoterPageState extends State<EditVoterPage> {
 
   Future<void> _updateVoter() async {
     try {
-      setState(() {
-        progress=true;
-      });
+      setState(() => progress = true);
+
       final updatedMap = widget.voter.toMap()
         ..addAll({
           'houseNo': houseC.text.trim(),
@@ -238,27 +239,59 @@ class _EditVoterPageState extends State<EditVoterPage> {
           'gender': genderC.text.trim(),
           'age': int.tryParse(ageC.text.trim()) ?? widget.voter.age,
           'epicNo': epicC.text.trim(),
-          "nameEn":nameEnC.text.trim(),
-          "fatherNameEn":fatherEnC.text.trim(),
+          "nameEn": nameEnC.text.trim(),
+          "fatherNameEn": fatherEnC.text.trim(),
         });
 
       await FirebaseFirestore.instance
           .collection(widget.collectionId)
           .doc(widget.voter.voterId)
           .update(updatedMap);
-      setState(() {
-        progress=false;
-      });
-      Navigator.pop(context, true); // success
+
+      final updatedModel = FinalVoterList.fromMap(updatedMap);
+      await VoterCache.updateOne(widget.collectionId, updatedModel);
+
+      setState(() => progress = false);
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => AlertDialog(
+          title: const Text("Update Successful"),
+          content: const Text("Changes saved successfully.\n\nWhat would you like to do?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(ctx).pop();
+                Navigator.of(context).pop();
+                },
+              child: const Text("Go Back"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(ctx).pop();
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => InitCla(
+                      id: widget.collectionId,
+                      username: user2.username, // global user
+                    ),
+                  ),
+                      (route) => false,
+                );
+              },
+              child: const Text("Refresh App"),
+            ),
+          ],
+        ),
+      );
+
     } catch (e) {
-      setState(() {
-        progress=false;
-      });
+      setState(() => progress = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Update failed: $e")),
       );
     }
   }
-
 }
 

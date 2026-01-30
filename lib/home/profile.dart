@@ -3,6 +3,7 @@ import 'package:adaptive_theme/adaptive_theme.dart' show AdaptiveTheme, Adaptive
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:inditrans/inditrans.dart' as inditrans;
+import 'package:nsp2026/admin/admins/rectify%20english.dart';
 import 'package:nsp2026/admin/admins/rectify.dart';
 import 'package:nsp2026/admin/admins/see.dart';
 import 'package:nsp2026/admin/all_admin.dart';
@@ -116,7 +117,7 @@ class _ProfileState extends State<Profile> {
                         child: a(Icon(Icons.person_search,color: Colors.lightBlueAccent,),"Search Voters","Search Voters through respective Data")),
                     user2.isuploaddata?InkWell(
                       onLongPress: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (_)=>Rectify2()));
+                        Navigator.push(context, MaterialPageRoute(builder: (_)=>RectifySimple()));
                       },
                         onTap: (){
                           Navigator.push(context, MaterialPageRoute(builder: (_)=>Up(id: widget.id,)));
@@ -147,7 +148,6 @@ class _ProfileState extends State<Profile> {
                             return ;
                           }
                           Navigator.push(context, MaterialPageRoute(builder: (_)=>AllVoters(list: widget.list,id: widget.id,)));
-
                         },
                         child: a(Icon(Icons.menu,color: Colors.blue,),"All Voters","Get the List of All Voters")),
                     InkWell(

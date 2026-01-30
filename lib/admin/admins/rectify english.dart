@@ -21,7 +21,7 @@ class _RectifySimpleState extends State<RectifySimple> {
         actions: [
           ElevatedButton(
             onPressed: updateAllEnglishNames,
-            child: const Text("Update All"),
+            child: const Text("Update "),
           ),
           const SizedBox(width: 12),
         ],
@@ -47,7 +47,7 @@ class _RectifySimpleState extends State<RectifySimple> {
               return ListTile(
                 title: Text(data['name'] ?? ''),
                 subtitle: Text(data['fatherName'] ?? ''),
-                trailing: const Icon(Icons.pending, color: Colors.orange),
+                trailing: Text("${docs.length-i} left"),
               );
             },
           );
@@ -57,45 +57,83 @@ class _RectifySimpleState extends State<RectifySimple> {
   }
   Future<String> hindiToRomanFormatted(String text) async {
     await inditrans.init();
-
     final raw = inditrans.transliterate(
       text,
       inditrans.Script.devanagari,
       inditrans.Script.readableLatin,
       inditrans.Option.IgnoreVedicAccents,
     );
-
-    return toTitleCase(raw); // 👈 formatting here
+    return toTitleCase(raw);
   }
   Future<void> updateAllEnglishNames() async {
     final snap = await col
         .where('transliteradone', isEqualTo: false)
         .get();
 
-    for (final doc in snap.docs) {
-      final data = doc.data();
+    final docs = snap.docs;
 
-      final nameHindi = data['name'] ?? '';
-      final fatherHindi = data['fatherName'] ?? '';
-
-      if (nameHindi.toString().isEmpty && fatherHindi.toString().isEmpty) continue;
-
-      final nameEn = nameHindi.toString().isNotEmpty
-          ? await hindiToRomanFormatted(nameHindi)
-          : '';
-
-      final fatherEn = fatherHindi.toString().isNotEmpty
-          ? await hindiToRomanFormatted(fatherHindi)
-          : '';
-
-      await doc.reference.update({
-        'nameEn': nameEn,
-        'fatherNameEn': fatherEn,
-        'transliteradone': true,
-      });
+    if (docs.isEmpty) {
+      debugPrint("✅ No pending records to transliterate");
+      return;
     }
 
-    debugPrint("✅ Transliteration completed for all pending records");
+    const int batchSize = 30;
+    int processed = 0;
+
+    for (int i = 0; i < docs.length; i += batchSize) {
+      final batch = docs.skip(i).take(batchSize);
+
+      // ================= PARALLEL COMPUTE =================
+      final futures = batch.map((doc) async {
+        final data = doc.data();
+
+        if (data['transliteradone'] == true) return null;
+
+        final nameHindi = (data['name'] ?? '').toString();
+        final fatherHindi = (data['fatherName'] ?? '').toString();
+
+        if (nameHindi.isEmpty && fatherHindi.isEmpty) return null;
+
+        final nameFuture = nameHindi.isNotEmpty
+            ? hindiToRomanFormatted(nameHindi)
+            : Future.value('');
+
+        final fatherFuture = fatherHindi.isNotEmpty
+            ? hindiToRomanFormatted(fatherHindi)
+            : Future.value('');
+
+        final results = await Future.wait([nameFuture, fatherFuture]);
+
+        return _BatchUpdateData(
+          ref: doc.reference,
+          nameEn: results[0],
+          fatherNameEn: results[1],
+        );
+      }).toList();
+
+      final results = await Future.wait(futures);
+
+      // ================= SAFE FIRESTORE BATCH =================
+      final writeBatch = FirebaseFirestore.instance.batch();
+
+      for (final r in results) {
+        if (r == null) continue;
+
+        writeBatch.update(r.ref, {
+          'nameEn': r.nameEn,
+          'fatherNameEn': r.fatherNameEn,
+          'transliteradone': true,
+        });
+      }
+
+      await writeBatch.commit(); // 🔥 atomic batch commit
+
+      processed += batch.length;
+
+      debugPrint("⚡ Processed $processed / ${docs.length}");
+    }
+
+    debugPrint("✅ FAST transliteration completed safely");
   }
 
   String toTitleCase(String input) {
@@ -107,4 +145,15 @@ class _RectifySimpleState extends State<RectifySimple> {
         .join(' ');
   }
 
+}
+class _BatchUpdateData {
+  final DocumentReference<Map<String, dynamic>> ref;
+  final String nameEn;
+  final String fatherNameEn;
+
+  const _BatchUpdateData({
+    required this.ref,
+    required this.nameEn,
+    required this.fatherNameEn,
+  });
 }
